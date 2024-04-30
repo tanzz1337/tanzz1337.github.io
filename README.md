@@ -1,2 +1,17 @@
-# tanzz1337.github.io
-Personal Portofolio
+# Hi,Selmat Datang di Halaman Portofolio Saya!
+
+"Terus Semangat dan Pantang Menyerah Untuk Menjadi Apa Yang Kau Inginkan !"
+
+
+## 🛠 Skills
+Pacul Tanah & Angkat Bata....
+
+
+## Authors
+
+- [./Syncr0ne1337](https://www.linkedin.com/in/sultanmarlindo)
+
+
+## 🚀 About Me
+I'm a Cyber Security Enthusiast...
+
