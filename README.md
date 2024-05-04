@@ -4,7 +4,7 @@
 
 
 ## 🛠 Skills
-Pacul Tanah & Angkat Bata....
+Pacul Tanah,Angkat Bata & Ngarit Rumputt ....
 
 
 ## Authors
