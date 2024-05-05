@@ -1,6 +1,6 @@
-# Hi,Selmat Datang di Halaman Portofolio Saya!
+# Hi,Selamat Datang di Halaman Portofolio Saya!
 
-"Terus Semangat dan Pantang Menyerah Untuk Menjadi Apa Yang Kau Inginkan !"
+"Quote : 'Terus Semangat dan Pantang Menyerah Untuk Menjadi Apa Yang Kau Inginkan !'"
 
 
 ## 🛠 Skills
