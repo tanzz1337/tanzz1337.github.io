@@ -58,7 +58,7 @@ function displayItem(item) {
     
     const imgElement = document.getElementById('itemImage');
     // Path ke folder images
-    imgElement.src = `images/${item.image}`;
+    imgElement.src = `${item.image}`;
     imgElement.alt = item.name;
     
     // Jika gambar tidak ditemukan, gunakan placeholder
@@ -136,4 +136,5 @@ document.getElementById('searchName').addEventListener('input', function() {
     if (this.value.trim()) {
         document.getElementById('searchId').value = '';
     }
+
 });
