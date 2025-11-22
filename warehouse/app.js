@@ -58,7 +58,8 @@ function displayItem(item) {
     
     const imgElement = document.getElementById('itemImage');
     // Path ke folder images
-    imgElement.src = `/${item.image}`;
+    // imgElement.src = `/${item.image}`;
+    imgElement.src = item.image;
     imgElement.alt = item.name;
     
     // Jika gambar tidak ditemukan, gunakan placeholder
@@ -138,4 +139,5 @@ document.getElementById('searchName').addEventListener('input', function() {
     }
 
 });
+
 
