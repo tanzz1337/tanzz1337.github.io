@@ -1,963 +1,1947 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tanzz1337 - Web Pentester Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sultan Raja Marlindo — Penetration Tester</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0a0a0a;
+  --bg2:       #111111;
+  --bg3:       #161616;
+  --bg4:       #1c1c1c;
+  --border:    #262626;
+  --border2:   #333333;
+  --text:      #f4f4f4;
+  --text2:     #a8a8a8;
+  --text3:     #6f6f6f;
+  --green:     #42be65;
+  --green2:    #24a148;
+  --cyan:      #33b1ff;
+  --cyan2:     #0072c3;
+  --red:       #fa4d56;
+  --yellow:    #f1c21b;
+  --orange:    #ff832b;
+  --mono:      'IBM Plex Mono', monospace;
+  --sans:      'IBM Plex Sans', sans-serif;
+  --display:   'Bebas Neue', sans-serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── SELECTION ── */
+::selection { background: var(--green2); color: #fff; }
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.4;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  height: 48px;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+}
+.topbar-logo {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--green);
+  letter-spacing: 0.05em;
+  display: flex; align-items: center; gap: 8px;
+}
+.topbar-logo::before {
+  content: '>';
+  color: var(--text3);
+}
+.topbar-nav {
+  display: flex; gap: 32px;
+  list-style: none;
+}
+.topbar-nav a {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text3);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.topbar-nav a:hover { color: var(--green); }
+.topbar-status {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+.topbar-status::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 120px 40px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.3;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
+}
+.hero-scan {
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  animation: scan 4s ease-in-out infinite;
+  opacity: 0.4;
+}
+@keyframes scan {
+  0% { top: 15%; opacity: 0; }
+  10% { opacity: 0.4; }
+  90% { opacity: 0.4; }
+  100% { top: 85%; opacity: 0; }
+}
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--green);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  padding: 6px 12px;
+  border: 1px solid var(--green2);
+  background: rgba(66,190,101,0.06);
+}
+.hero-tag::before { content: '//'; color: var(--text3); }
+.hero-name {
+  font-family: var(--display);
+  font-size: clamp(64px, 10vw, 120px);
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.hero-name span { color: var(--green); }
+.hero-title {
+  font-family: var(--mono);
+  font-size: clamp(14px, 2vw, 18px);
+  color: var(--text3);
+  margin-bottom: 40px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-title::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--green);
+}
+.hero-desc {
+  max-width: 560px;
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 48px;
+}
+.hero-stats {
+  display: flex; gap: 48px;
+  margin-bottom: 48px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.hero-stat-num {
+  font-family: var(--display);
+  font-size: 48px;
+  color: var(--green);
+  line-height: 1;
+}
+.hero-stat-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.hero-ctas {
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+.btn-primary {
+  background: var(--green);
+  color: #000;
+}
+.btn-primary:hover { background: #52d975; transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.btn-outline:hover { border-color: var(--green); color: var(--green); }
+
+/* ── SECTION ── */
+section { padding: 100px 40px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-header {
+  display: flex; align-items: baseline; gap: 16px;
+  margin-bottom: 64px;
+}
+.section-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  letter-spacing: 0.1em;
+}
+.section-title {
+  font-family: var(--display);
+  font-size: clamp(36px, 5vw, 56px);
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── ABOUT ── */
+#about { background: var(--bg2); border-top: 1px solid var(--border); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.about-text p {
+  color: var(--text2);
+  line-height: 1.9;
+  margin-bottom: 20px;
+}
+.about-text p:last-child { margin-bottom: 0; }
+.skills-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.skill-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text2);
+  transition: all 0.2s;
+}
+.skill-item:hover {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(66,190,101,0.05);
+}
+.skill-item::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+/* ── HALL OF FAME ── */
+#hall-of-fame { background: var(--bg); border-top: 1px solid var(--border); }
+.hof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2px;
+}
+.hof-item {
+  padding: 20px 24px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.hof-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--green);
+  transform: scaleY(0);
+  transition: transform 0.2s;
+  transform-origin: bottom;
+}
+.hof-item:hover { border-color: var(--border2); background: var(--bg3); }
+.hof-item:hover::before { transform: scaleY(1); }
+.hof-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.hof-org {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+}
+.hof-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 3px 8px;
+  background: rgba(66,190,101,0.1);
+  border: 1px solid var(--green2);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--green);
+  letter-spacing: 0.05em;
+}
+
+/* ── ACHIEVEMENTS ── */
+#achievements { background: var(--bg2); border-top: 1px solid var(--border); }
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2px;
+}
+.cert-item {
+  padding: 20px 24px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.cert-item:hover { border-color: var(--cyan2); }
+.cert-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.cert-org {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+}
+.cert-type {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--cyan);
+  letter-spacing: 0.05em;
+}
+.cert-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  background: rgba(51,177,255,0.1);
+  border: 1px solid var(--cyan2);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--cyan);
+  font-weight: 600;
+  float: right;
+  margin-top: -4px;
+}
+
+/* ── CTF ── */
+#ctf { background: var(--bg); border-top: 1px solid var(--border); }
+.ctf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2px;
+}
+.ctf-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 32px;
+  position: relative;
+  transition: all 0.2s;
+}
+.ctf-card:hover { border-color: var(--yellow); }
+.ctf-rank {
+  font-family: var(--display);
+  font-size: 56px;
+  line-height: 1;
+  color: var(--yellow);
+  margin-bottom: 12px;
+}
+.ctf-rank span {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text3);
+  vertical-align: super;
+  font-weight: 400;
+}
+.ctf-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.ctf-detail {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.7;
+}
+.ctf-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--yellow);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: gap 0.2s;
+}
+.ctf-link:hover { gap: 10px; }
+
+/* ── PROJECTS ── */
+#projects { background: var(--bg2); border-top: 1px solid var(--border); }
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 2px;
+}
+.project-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 0;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.project-card:hover { border-color: var(--orange); }
+.project-logo-wrap {
+  background: #0a0a0a;
+  border-bottom: 1px solid var(--border);
+  padding: 24px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  position: relative;
+}
+.project-logo-wrap svg {
+  max-height: 160px;
+}
+.project-card-body {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.project-lang {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  background: var(--bg4);
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.project-name {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--orange);
+  margin-bottom: 8px;
+  letter-spacing: 0.03em;
+}
+.project-desc {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+  flex: 1;
+  margin-bottom: 20px;
+}
+.project-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 20px;
+}
+.project-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  letter-spacing: 0.05em;
+}
+.project-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--orange);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: gap 0.2s;
+  margin-top: auto;
+}
+.project-link:hover { gap: 10px; }
+
+/* ── BLOG ── */
+#blog { background: var(--bg); border-top: 1px solid var(--border); }
+.blog-list {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.blog-item {
+  display: flex; align-items: center; gap: 24px;
+  padding: 24px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: all 0.2s;
+  color: inherit;
+}
+.blog-item:hover { border-color: var(--cyan); }
+.blog-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  min-width: 100px;
+  letter-spacing: 0.05em;
+}
+.blog-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+.blog-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+  transition: color 0.2s;
+}
+.blog-item:hover .blog-title { color: var(--cyan); }
+.blog-arrow {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text3);
+  transition: all 0.2s;
+}
+.blog-item:hover .blog-arrow { color: var(--cyan); transform: translateX(4px); }
+
+/* ── CONTACT ── */
+#contact {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.contact-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.contact-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.contact-title {
+  font-family: var(--display);
+  font-size: clamp(40px, 6vw, 72px);
+  color: var(--text);
+  margin-bottom: 20px;
+}
+.contact-sub {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 40px;
+  line-height: 1.7;
+}
+.contact-links {
+  display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+}
+.contact-links {
+  display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
+}
+.contact-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text2);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+}
+.contact-link:hover { border-color: var(--green); color: var(--green); }
+.contact-link:hover svg { fill: var(--green); }
+.contact-link svg { transition: fill 0.2s; flex-shrink: 0; }
+
+/* ── FOOTER ── */
+footer {
+  padding: 24px 40px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 0.05em;
+}
+.footer-text span { color: var(--green); }
+
+/* ── TERMINAL ACCENT ── */
+.terminal-line {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 40px;
+  display: flex; align-items: center; gap: 8px;
+}
+.terminal-line::before { content: '$'; color: var(--green); }
+.terminal-cursor {
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--green);
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── ANIMATIONS ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── HERO VISUAL (right side) ── */
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 60px;
+  align-items: center;
+}
+/* .hero-left {} */
+.hero-visual {
+  position: relative;
+  height: 560px;
+  padding: 30px 0 30px 140px; /* top/bottom untuk b1/b3, left untuk b2 */
+}
+
+/* Terminal window */
+.term-window {
+  position: absolute;
+  top: 30px; bottom: 30px; left: 140px; right: 0;
+  background: #0d0d0d;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 60px rgba(66,190,101,0.08), 0 0 120px rgba(66,190,101,0.04);
+}
+.term-titlebar {
+  height: 32px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.term-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.term-dot-r { background: #ff5f57; }
+.term-dot-y { background: #ffbd2e; }
+.term-dot-g { background: #28c840; }
+.term-title-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #555;
+  margin-left: 8px;
+  letter-spacing: 0.05em;
+}
+.term-body {
+  flex: 1;
+  padding: 16px;
+  overflow: hidden;
+  position: relative;
+}
+.term-output {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #42be65;
+}
+.term-output .dim    { color: #444; }
+.term-output .cyan   { color: #33b1ff; }
+.term-output .yellow { color: #f1c21b; }
+.term-output .red    { color: #fa4d56; }
+.term-output .white  { color: #c6c6c6; }
+.term-output .bold   { color: #ffffff; font-weight: 600; }
+.term-output .prompt { color: #42be65; }
+.term-line {
+  display: block;
+  opacity: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.term-line.show { opacity: 1; }
+/* Scan overlay on terminal */
+.term-scanline {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(66,190,101,0.15), transparent);
+  animation: termscan 3s linear infinite;
+  pointer-events: none;
+}
+@keyframes termscan {
+  0%   { top: 0; opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Floating badges around the terminal */
+.hero-badge {
+  position: absolute;
+  padding: 7px 13px;
+  background: #0f0f0f;
+  border: 1px solid #42be65;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #a8a8a8;
+  white-space: nowrap;
+  animation: floatbadge 4s ease-in-out infinite;
+  z-index: 10;
+  box-shadow: 0 0 16px rgba(66,190,101,0.15);
+}
+.hero-badge b { color: var(--green); }
+/* Badge di atas terminal — keluar ke atas */
+.hero-badge.b1 {
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: floatbadge1 4s ease-in-out infinite;
+  animation-delay: 0s;
+}
+/* Badge di kiri luar terminal */
+.hero-badge.b2 {
+  top: 50%;
+  left: -130px;
+  transform: translateY(-50%);
+  animation: floatbadge2 4.5s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+/* Badge di bawah terminal — keluar ke bawah */
+.hero-badge.b3 {
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: floatbadge3 3.8s ease-in-out infinite;
+  animation-delay: 0.6s;
+}
+@keyframes floatbadge1 {
+  0%,100% { top: -22px; }
+  50%     { top: -30px; }
+}
+@keyframes floatbadge2 {
+  0%,100% { left: -130px; }
+  50%     { left: -138px; }
+}
+@keyframes floatbadge3 {
+  0%,100% { bottom: -22px; }
+  50%     { bottom: -30px; }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .hero-content { grid-template-columns: 1fr; }
+  .hero-visual  { display: none; }
+}
+@media (max-width: 768px) {
+  .topbar { padding: 0 20px; }
+  .topbar-nav { display: none; }
+  .hero { padding: 100px 20px 60px; }
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+  section { padding: 60px 20px; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hof-grid, .cert-grid, .ctf-grid, .projects-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">Penetration<span class="accent">Tester</span></div>
-        <button class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></button>
-        <nav class="nav-menu">
-            <a href="#about"><b>About Me</b></a>
-            <a href="#achievements"><b>Awards</b></a>
-            <a href="#hall-of-fame"><b>Hall of Fame</a>
-            <a href="#ctf-achievements"><b>CTF</a></b>
-            <a href="#testimonial"><b>Galeri</a></b>
-            <a href="#blog"><b>Blog</a></b>
-            <a href="#footer"><b>Contact</a></b>
-        </nav>
-    </header>
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar-logo">tanzz1337</div>
+  <ul class="topbar-nav">
+    <li><a href="#about">About</a></li>
+    <li><a href="#hall-of-fame">Hall of Fame</a></li>
+    <li><a href="#achievements">Awards</a></li>
+    <li><a href="#ctf">CTF</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="topbar-status">Available for work</div>
+</nav>
 
-    <section id="hero" class="hero">
-        <h1><b>Hello,saya Sultan Raja Marlindo</b></h1>
-        <p class="subtitle"><b>Web Penetration Tester & Security Researcher 🛡️</b></p>
-        <div class="hero-links">
-            <!-- <a href="#hall-of-fame" class="btn primary-btn">Lihat Bug Disclosures</a> -->
-            <a href="https://github.com/tanzz1337" target="_blank" class="btn secondary-btn"><i class="fab fa-github"></i> GitHub</a>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-scan"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+    <div class="hero-tag">Penetration Tester &amp; Security Researcher</div>
+    <h1 class="hero-name">Sultan Raja<br><span>Marlindo</span></h1>
+    <div class="hero-title">Web AppSec / Bug Hunter / CTF Player</div>
+    <div class="terminal-line">
+      cat /etc/security/profile.txt<span class="terminal-cursor"></span>
+    </div>
+    <p class="hero-desc">
+      Web Penetration Tester dengan fokus pada identifikasi dan eksploitasi kerentanan aplikasi web,
+      khususnya OWASP Top 10. Telah melaporkan kerentanan kepada lebih dari 60 instansi pemerintah,
+      BUMN, universitas, dan perusahaan swasta di Indonesia dan global.
+    </p>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">63+</div>
+        <div class="hero-stat-label">Certificate of Appreciation</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">10</div>
+        <div class="hero-stat-label">Hall of Fame</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">4</div>
+        <div class="hero-stat-label">CTF Achievements</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">Top</div>
+        <div class="hero-stat-label">93 / 2941 NahamCon</div>
+      </div>
+    </div>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn btn-primary">Get in Touch</a>
+      <a href="https://github.com/tanzz1337" target="_blank" class="btn btn-outline">GitHub Profile</a>
+    </div>
+    </div><!-- /hero-left -->
+
+    <!-- RIGHT: Terminal animation -->
+    <div class="hero-visual">
+      <!-- Floating info badges -->
+      <div class="hero-badge b1"><b>SQLi</b> &mdash; Detected</div>
+      <div class="hero-badge b2"><b>CVE-2024</b> &mdash; Patched</div>
+      <div class="hero-badge b3"><b>XSS</b> &mdash; Confirmed</div>
+
+      <!-- Terminal window -->
+      <div class="term-window">
+        <div class="term-titlebar">
+          <div class="term-dot term-dot-r"></div>
+          <div class="term-dot term-dot-y"></div>
+          <div class="term-dot term-dot-g"></div>
+          <span class="term-title-text">tanzz1337@kali: ~/pentest</span>
         </div>
-    </section>
-
-    <section id="about" class="container">
-        <h2><i class="fas fa-user-secret accent"></i> About Me</h2>
-        <div class="about-content">
-            <p><b>Saya adalah Web Penetration Tester,CTF Player & Cyber Security Enthusiast dengan fokus pada identifikasi dan eksploitasi kerentanan pada aplikasi web, khususnya yang berkaitan dengan OWASP Top 10. Saya bersemangat dalam menulis laporan yang jelas dan memberikan rekomendasi mitigasi yang efektif.</b></p>
-            <h3>Keahlian Teknis</h3>
-            <div class="skills-list">
-                <span class="skill-badge"><b>SQL Injection</b></span>
-                <span class="skill-badge"><b>Cross-Site Scripting (XSS)</b></span>
-                <span class="skill-badge"><b>Burp Suite </b></span>
-                <span class="skill-badge"><b>Python Scripting</b></span>
-                <span class="skill-badge"><b>API Security</b></span>
-                <span class="skill-badge"><b>Source Code Review</b></span>
-                <span class="skill-badge"><b>Linux</b></span>
-                <span class="skill-badge"><b>Windows</b></span>
-                <span class="skill-badge"><b>Nmap</b></span>
-                <span class="skill-badge"><b>Other</b></span>
-            </div>
+        <div class="term-body">
+          <div class="term-scanline"></div>
+          <div class="term-output" id="termOutput"></div>
         </div>
-    </section>
+      </div>
+    </div>
 
-    <section id="achievements" class="container">
-        <h2><i class="fas fa-medal accent"></i> Achievements & Awards</h2>
-        <div class="compact-achievement-list">
+  </div>
+</section>
 
-            <!--Medal Logo-->
-            <!--#1-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Badan Siber dan Sandi Negara</b></p>
-                    <p class="date">20 September 2023</p>
-                </div>
-                <img src="\sertifikat\1.jpg" alt="sertifikat 1" width="150">
-            </div>
-            <!--#2-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation & Penetration Testing </h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Badan Pengembangan Dan Pembinaan Bahasa</b></p>
-                    <p class="date">4 Maret 2024</p>
-                </div>
-                <img src="\sertifikat\2.jpg" alt="sertifikat 1" width="150">
-            </div>
-            <!--#3-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Kementrian Kesehatan Republik Indonesia</b></p>
-                    <p class="date">5 Maret 2024</p>
-                </div>
-                <img src="\sertifikat\3.jpg" alt="sertifikat 1" width="150">
-            </div>
-            <!--#4-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Pemerintah Provinsi DKI Jakarta</b></p>
-                    <p class="date">14 Desember 2023</p>
-                </div>
-                <img src="\sertifikat\4.jpg" alt="sertifikat 4" width="150" height="100">
-            </div>
-            <!--#5-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Pustekinfo Dewan Perwakilan Rakyat RI</b></p>
-                    <p class="date">14 Desember 2023</p>
-                </div>
-                <img src="\sertifikat\5.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#6-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>DISKOMINFOSTANDI Kota Bekasi</b></p>
-                    <p class="date">05 Februari 2024</p>
-                </div>
-                <img src="\sertifikat\6.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#7-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>CSIRT Perum Perhutani</b></p>
-                    <p class="date">26 Oktober 2023</p>
-                </div>
-                <img src="\sertifikat\7.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#8-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi dan Informatik Kota Malang</b></p>
-                    <p class="date">20 November 2023</p>
-                </div>
-                <img src="\sertifikat\8.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#9-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>CSIRT Kementrian PPN Bappenas</b></p>
-                    <p class="date">15 Agustus 2023</p>
-                </div>
-                <img src="\sertifikat\9.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#10-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi Informatika dan Statistik Kota Magelang</b></p>
-                    <p class="date">15 Maret 2024</p>
-                </div>
-                <img src="\sertifikat\10.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#11-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>CSIRT Kota BLITAR</b></p>
-                    <p class="date">Januari 2024</p>
-                </div>
-                <img src="\sertifikat\11.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#12-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Ikatan Pisikolog Klinis Indonesia</b></p>
-                    <p class="date">01 Desember 2023</p>
-                </div>
-                <img src="\sertifikat\12.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#13-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Layanan Hosting Rumah Web Indonesia</b></p>
-                    <p class="date">17 Januari 2024</p>
-                </div>
-                <img src="\sertifikat\13.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#14-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>BINARAGA NET</b></p>
-                    <p class="date">Desember 2022</p>
-                </div>
-                <img src="\sertifikat\14.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#15-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>DQLab - Pusat Belajar Data Science</b></p>
-                    <p class="date">16 Januari 2024</p>
-                </div>
-                <img src="\sertifikat\15.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#16-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Direktorat Teknologi Informasi Universitas Brawijaya Malang</b></p>
-                    <p class="date">29 November 2023</p>
-                </div>
-                <img src="\sertifikat\16.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#17-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Universitas Narotama Surabaya</b></p>
-                    <p class="date">29 Desember 2023</p>
-                </div>
-                <img src="\sertifikat\17.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#18-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>UPT Pustik Universitas Mataram</b></p>
-                    <p class="date">15 Januari 2024</p>
-                </div>
-                <img src="\sertifikat\18.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#19-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Platform Sosial Bersedekah.com</b></p>
-                    <p class="date">14 Desember 2022</p>
-                </div>
-                <img src="\sertifikat\19.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#20-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Innovation Center Universitas AMIKOM Yogyakarta</b></p>
-                    <p class="date">14 Maret 2024</p>
-                </div>
-                <img src="\sertifikat\20.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#21-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Badan Siber Sandi Negara (VVIP Program)</b></p>
-                    <p class="date">27 Februari 2024</p>
-                </div>
-                <img src="\sertifikat\21.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#22-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>IPK Indonesia CSIRT</b></p>
-                    <p class="date">1 April 2024</p>
-                </div>
-                <img src="\sertifikat\22.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#23-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Direktorat Teknologi Informasi Institut Teknologi Bandung (ITB)</b></p>
-                    <p class="date">22 April 2024</p>
-                </div>
-                <img src="\sertifikat\23.jpeg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#24-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Diskominfo Dan Persandian Pemerintah Kota Gorontalo</b></p>
-                    <p class="date">07 Mei 2024</p>
-                </div>
-                <img src="\sertifikat\24.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#25-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation (Pentest)</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Badan Pengembangan dan Pembinaan Bahasa</b></p>
-                    <p class="date">04 April 2024</p>
-                </div>
-                <img src="\sertifikat\25.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#26-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation (Pentest)</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Badan Pengembangan Dan Pembinaan Bahasa</b></p>
-                    <p class="date">05 April 2024</p>
-                </div>
-                <img src="\sertifikat\26.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#27-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Diskominfo Kota Pontianak</b></p>
-                    <p class="date">14 Mei 2024</p>
-                </div>
-                <img src="\sertifikat\27.jpg" alt="sertifikat 5" width="150" height="100">
-            </div>
-            <!--#28-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>CSIRT Nindya Karya (BUMN)</b></p>
-                    <p class="date">20 Mei 2024</p>
-                </div>
-                <img src="\sertifikat\28.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#29-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Diskominfo dan Statistik Provinsi Riau</b></p>
-                    <p class="date">27 Mei 2024</p>
-                </div>
-                <img src="\sertifikat\29.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#30-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation (Pemerhati Keamanan Siber)</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Kementrian Pendidikan,Kebudayaan,Riset dan Teknologi</b></p>
-                    <p class="date">06 Juni 2024</p>
-                </div>
-                <img src="\sertifikat\30.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#31-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>IPKINDONESIA-CSIRT</b></p>
-                    <p class="date">02 Juni 2024</p>
-                </div>
-                <img src="\sertifikat\31.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#32-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi Dan Informatika DIY</b></p>
-                    <p class="date">14 Juni 2024</p>
-                </div>
-                <img src="\sertifikat\32.jpg" alt="sertifikat 5" width="150" height="110">
-            </div>
-            <!--#33-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Kementrian Komunikasi dan Informatika RI</b></p>
-                    <p class="date">08 Juni 2024</p>
-                </div>
-                <img src="\sertifikat\33.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#34-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Letter Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi dan Informatika Kota Depok</b></p>
-                    <p class="date">13 Juli 2024</p>
-                </div>
-                <img src="\sertifikat\34.jpg" alt="sertifikat 5" width="150" height="110">
-            </div>
-            <!--#35-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi dan Informatika Kota Depok</b></p>
-                    <p class="date">14 Juli 2024</p>
-                </div>
-                <img src="\sertifikat\35.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#36-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>PT. Beon Intermedia (Jagoan Hosting)</b></p>
-                    <p class="date">30 Juli 2024</p>
-                </div>
-                <img src="\sertifikat\36.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#37-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Diskominfo Kabupaten Jepara</b></p>
-                    <p class="date">29 Juli 2024</p>
-                </div>
-                <img src="\sertifikat\37.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#38-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi dan Informatika Provinsi Jawa Timur</b></p>
-                    <p class="date">14 Agustus 2024</p>
-                </div>
-                <img src="\sertifikat\38.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#39-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>CSIRT Universitas Bina Bangsa Getsempena</b></p>
-                    <p class="date">02 September 2024</p>
-                </div>
-                <img src="\sertifikat\39.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#40-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi Dan Informatik Kota Cimahi</b></p>
-                    <p class="date">02 September 2024</p>
-                </div>
-                <img src="\sertifikat\40.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#41-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Kominfo Kota Makasar</b></p>
-                    <p class="date">09 September 2024</p>
-                </div>
-                <img src="\sertifikat\41.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#42-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Kementrian Koordinator Bidang Kemaritiman dan Investasi</b></p>
-                    <p class="date">06 September 2024</p>
-                </div>
-                <img src="\sertifikat\42.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#43-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi Dan Informatika Provinsi Jawa Barat</b></p>
-                    <p class="date">22 Mei 2024</p>
-                </div>
-                <img src="\sertifikat\43.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#44-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Universitas Jendral Ahmad Yani Yogyakarta</b></p>
-                    <p class="date">17 September 2024</p>
-                </div>
-                <img src="\sertifikat\44.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#45-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Diskominfo Kota Bantul</b></p>
-                    <p class="date">04 November 2024</p>
-                </div>
-                <img src="\sertifikat\45.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#46-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi Informatika Banyuwangi Kab</b></p>
-                    <p class="date">22 Oktober 2024</p>
-                </div>
-                <img src="\sertifikat\46.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#47-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi Dan Informatika Kota Kediri</b></p>
-                    <p class="date">04 November 2024</p>
-                </div>
-                <img src="\sertifikat\47.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#48-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi Dan Informatika Kulon Progo Kab</b></p>
-                    <p class="date">03 November 2024</p>
-                </div>
-                <img src="\sertifikat\48.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#49-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Dinas Komunikasi Dan Informatika Lamongan Kab</b></p>
-                    <p class="date">11 Oktober 2024</p>
-                </div>
-                <img src="\sertifikat\49.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#50-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Universitas Nusa Mandiri</b></p>
-                    <p class="date">04 November 2024</p>
-                </div>
-                <img src="\sertifikat\50.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#51-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Diskominfotik Persandian dan Statistik Provinsi Sulawesi Tengah</b></p>
-                    <p class="date">14 Desember 2023</p>
-                </div>
-                <img src="\sertifikat\51.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#52-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>PT. Transportasi Jakarta (Transjakarta)</b></p>
-                    <p class="date">23 Desember 2024</p>
-                </div>
-                <img src="\sertifikat\52.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#53-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Achievement</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Direktorat Sistem Informasi dan Dan Digitalisasi Universitas AirLangga</b></p>
-                    <p class="date">27 Desember 2024</p>
-                </div>
-                <img src="\sertifikat\53.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#54-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Diskominfo Kota Jombang</b></p>
-                    <p class="date">07 Januari 2024</p>
-                </div>
-                <img src="\sertifikat\54.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#55-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Letter Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Sekretariat Komisi Penyiaran Indonesia</b></p>
-                    <p class="date">15 April 2025</p>
-                </div>
-                <img src="\sertifikat\55.jpg" alt="sertifikat 5" width="150" height="110">
-            </div>
-            <!--#56-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Komisi Penyiaran Indonesia</b></p>
-                    <p class="date">15 April 2025</p>
-                </div>
-                <img src="\sertifikat\56.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#57-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Pusat Pelaporan dan Analisis Transaksi Keuangan (PPATK)</b></p>
-                    <p class="date">21 April 2025</p>
-                </div>
-                <img src="\sertifikat\57.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#58-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Diskominfo Kutai Kartanegara</b></p>
-                    <p class="date">23 Juli 2025</p>
-                </div>
-                <img src="\sertifikat\58.jpg" alt="sertifikat 5" width="150">
-            </div>
-            <!--#59-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>Badan Meteorlogi Klimatologi dan Geofisika (BMKG)</b></p>
-                    <p class="date">21 Agustus 2025</p>
-                </div>
-                <img src="\sertifikat\59.jpg" alt="sertifikat 59" width="150">
-            </div>
-            <!--#60-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>UNIVERSITAS TERBUKA - UT</b></p>
-                    <p class="date">22 Oktober 2025</p>
-                </div>
-                <img src="\sertifikat\60.jpeg" alt="sertifikat 60" width="150">
-            </div>
-            <!--#61-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>POLTEK SIBER CERDIKA INTERNASIONAL</b></p>
-                    <p class="date">23 OKTOBER 2025</p>
-                </div>
-                <img src="\sertifikat\61.jpeg" alt="sertifikat 61" width="150">
-            </div>
-            <!--#62-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>DISKOMINFO KAB BLORA</b></p>
-                    <p class="date">23 OKTOBER 2025</p>
-                </div>
-                <img src="\sertifikat\62.jpg" alt="sertifikat 62" width="150">
-            </div>
-            <!--#63-->
-            <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-trophy"></i></div>
-                <div class="award-details">
-                    <h3>Certificate Of Appreciation</h3>
-                    <p class="issuer">Dikeluarkan oleh: <b>CSIRT BADAN SIBER DAN SANDI NEGARA</b></p>
-                    <p class="date">23 OKTOBER 2025</p>
-                </div>
-                <img src="\sertifikat\63.jpeg" alt="sertifikat 63" width="150">
-            </div>
-            <!--Bug Logo-->
-            <!-- <div class="achievement-item">
-                <div class="award-icon"><i class="fas fa-bug"></i></div>
-                <div class="award-details">
-                    <h3>Vulnerability Disclosure Acknowledgement (Critical)</h3>
-                    <p class="issuer">Dikeluarkan oleh: **Perusahaan Teknologi Global X** (via VDP)</p>
-                    <p class="date">Juni 2024</p>
-                </div>
-                <a href="URL_BUKTI" target="_blank" class="btn small-btn view-btn">Lihat Bukti</a>
-            </div> -->
-
-            <!--Next-->
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">About</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-grid fade-up">
+      <div class="about-text">
+        <p>
+          Saya adalah seorang Web Penetration Tester independen yang berspesialisasi dalam
+          identifikasi kerentanan pada aplikasi web berbasis OWASP Top 10. Dengan pengalaman
+          melaporkan kerentanan kepada instansi pemerintah tingkat nasional hingga BUMN dan
+          universitas, saya memahami standar disclosure yang bertanggung jawab.
+        </p>
+        <p>
+          Selain web security assessment, saya aktif berpartisipasi dalam kompetisi
+          Capture The Flag (CTF) di tingkat lokal, nasional, dan internasional —
+          meraih peringkat top 5% di beberapa event global.
+        </p>
+        <p>
+          Fokus utama: SQL Injection, XSS, API Security, IDOR, dan Source Code Review.
+          Saya percaya bahwa setiap laporan kerentanan harus disertai dengan bukti yang
+          jelas dan rekomendasi mitigasi yang actionable.
+        </p>
+      </div>
+      <div>
+        <div class="skills-title">// Technical Skills</div>
+        <div class="skills-grid">
+          <div class="skill-item">SQL Injection</div>
+          <div class="skill-item">XSS</div>
+          <div class="skill-item">Burp Suite</div>
+          <div class="skill-item">Python</div>
+          <div class="skill-item">API Security</div>
+          <div class="skill-item">Code Review</div>
+          <div class="skill-item">Nmap</div>
+          <div class="skill-item">Linux</div>
+          <div class="skill-item">IDOR</div>
+          <div class="skill-item">OWASP Top 10</div>
+          <div class="skill-item">CSRF</div>
+          <div class="skill-item">SSRF</div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section id="hall-of-fame" class="container">
-        <h2><i class="fas fa-shield-alt accent"></i> Hall of Fame (Temuan & Disclosures)</h2>
-        <div class="hall-list">
-            <!--1--->
-            <div class="hall-item">
-                <span class="hall-date">Agustus 2023</span>
-                <span class="hall-vulnerability">Badan Pemeriksaan Keuangan RI</span>
-                <span class="hall-target"></span>
-                <a href="https://csirt.bpk.go.id/posts/daftar-pelapor-keamanan#:~:Sultan+Raja+Marlindo" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--2--->
-            <div class="hall-item">
-                <span class="hall-date">September 2023</span>
-                <span class="hall-vulnerability">Google Honorable Mentions</span>
-                <span class="hall-target"></span>
-                <a href="https://bughunters.google.com/leaderboard/honorable-mentions" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--3--->
-            <div class="hall-item">
-                <span class="hall-date">Oktober 2023</span>
-                <span class="hall-vulnerability">Perum Perhutani</span>
-                <span class="hall-target"></span>
-                <a href="https://csirt.perhutani.co.id/?page_id=3594#~:Sultan%20Raja%20Marlindo" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--4--->
-            <div class="hall-item">
-                <span class="hall-date">November 2023</span>
-                <span class="hall-vulnerability">Universitas Bhayangkara Jakarta</span>
-                <span class="hall-target"></span>
-                <a href="https://csirt.ubharajaya.ac.id/whitehat/thanks#6a583360d41" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--5--->
-            <div class="hall-item">
-                <span class="hall-date">April 2024</span>
-                <span class="hall-vulnerability">Lenovo Global Personal Technology</span>
-                <span class="hall-target"></span>
-                <a href="https://bugcrowd.com/lenovoresponsibledisclosure/hall-of-fame#:~TANZZ1337" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--6--->
-            <div class="hall-item">
-                <span class="hall-date">Desember 2024</span>
-                <span class="hall-vulnerability">PT Transportasi Jakarta / Transjakarta</span>
-                <span class="hall-target"></span>
-                <a href="https://csirt.transjakarta.co.id/white-hacker/#:~Sultan%20Raja%20Marlindo" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--7--->
-            <div class="hall-item">
-                <span class="hall-date">April 2025</span>
-                <span class="hall-vulnerability">Tim Tanggap Insiden Siber Universitas Teknokrat</span>
-                <span class="hall-target"></span>
-                <a href="https://csirt.teknokrat.ac.id/our-heroes/#:~Sultan%20Raja%20Marlindo" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--8--->
-            <div class="hall-item">
-                <span class="hall-date">Oktober 2025</span>
-                <span class="hall-vulnerability">Tim Tanggap Insiden Siber Kukar Kab</span>
-                <span class="hall-target"></span>
-                <a href="https://ttis.kukarkab.go.id/whitehat-etam?page=1" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--9--->
-            <div class="hall-item">
-                <span class="hall-date">Oktober 2025</span>
-                <span class="hall-vulnerability">Politeknik Siber Cerdika Internasional </span>
-                <span class="hall-target"></span>
-                <a href="https://csirt.polteksci.ac.id/leadboard-white-hacker/" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
-            <!--10--->
-            <div class="hall-item">
-                <span class="hall-date">Desember 2023</span>
-                <span class="hall-vulnerability">EUFY SECURITY</span>
-                <span class="hall-target"></span>
-                <a href="https://hackerone.com/eufy_security/thanks" target="_blank" class="hall-link"><i class="fas fa-link"></i></a>
-            </div>
+<!-- HALL OF FAME -->
+<section id="hall-of-fame">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Hall of Fame</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="hof-grid fade-up">
+      <div class="hof-item">
+        <div class="hof-date">Agustus 2023</div>
+        <div class="hof-org">Badan Pemeriksaan Keuangan RI</div>
+        <div class="hof-badge">Government</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">September 2023</div>
+        <div class="hof-org">Google — Honorable Mentions</div>
+        <div class="hof-badge">Global Tech</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">Oktober 2023</div>
+        <div class="hof-org">Perum Perhutani</div>
+        <div class="hof-badge">BUMN</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">November 2023</div>
+        <div class="hof-org">Universitas Bhayangkara Jakarta</div>
+        <div class="hof-badge">University</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">April 2024</div>
+        <div class="hof-org">Lenovo — Global Personal Technology</div>
+        <div class="hof-badge">Global Tech</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">Desember 2024</div>
+        <div class="hof-org">PT Transportasi Jakarta / Transjakarta</div>
+        <div class="hof-badge">BUMD</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">Desember 2023</div>
+        <div class="hof-org">EUFY Security</div>
+        <div class="hof-badge">Global Tech</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">April 2025</div>
+        <div class="hof-org">CSIRT Universitas Teknokrat</div>
+        <div class="hof-badge">University</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">Oktober 2025</div>
+        <div class="hof-org">Tim Tanggap Insiden Siber Kukar Kab</div>
+        <div class="hof-badge">Government</div>
+      </div>
+      <div class="hof-item">
+        <div class="hof-date">Oktober 2025</div>
+        <div class="hof-org">Politeknik Siber Cerdika Internasional</div>
+        <div class="hof-badge">Education</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Awards</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="cert-grid fade-up">
+      <div class="cert-item">
+        <div class="cert-date">20 Sep 2023</div>
+        <div class="cert-org">Badan Siber dan Sandi Negara</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">27 Feb 2024</div>
+        <div class="cert-org">BSSN — VVIP Program</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">23 Okt 2025</div>
+        <div class="cert-org">CSIRT Badan Siber dan Sandi Negara</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">6 Jun 2024</div>
+        <div class="cert-org">Kementrian Pendidikan, Kebudayaan, Riset dan Teknologi</div>
+        <div class="cert-type">// Pemerhati Keamanan Siber</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">14 Jun 2024</div>
+        <div class="cert-org">Kominfo DIY</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">8 Jun 2024</div>
+        <div class="cert-org">Kementrian Komunikasi dan Informatika RI</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">5 Mar 2024</div>
+        <div class="cert-org">Kementrian Kesehatan RI</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">6 Sep 2024</div>
+        <div class="cert-org">Kementrian Koordinator Bidang Kemaritiman dan Investasi</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">22 Apr 2024</div>
+        <div class="cert-org">Institut Teknologi Bandung (ITB)</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">27 Des 2024</div>
+        <div class="cert-org">Universitas Airlangga</div>
+        <div class="cert-type">// Certificate of Achievement</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">14 Des 2023</div>
+        <div class="cert-org">Pustekinfo DPR RI</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">14 Ags 2024</div>
+        <div class="cert-org">Kominfo Provinsi Jawa Timur</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">22 Mei 2024</div>
+        <div class="cert-org">Kominfo Provinsi Jawa Barat</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">21 Apr 2025</div>
+        <div class="cert-org">PPATK</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">21 Ags 2025</div>
+        <div class="cert-org">BMKG</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">23 Des 2024</div>
+        <div class="cert-org">PT Transportasi Jakarta (Transjakarta)</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-date">15 Apr 2025</div>
+        <div class="cert-org">Komisi Penyiaran Indonesia</div>
+        <div class="cert-type">// Certificate of Appreciation</div>
+      </div>
+      <div class="cert-item" style="background:var(--bg4);border-color:var(--border2)">
+        <div class="cert-date">2022 — 2025</div>
+        <div class="cert-org">+ 45 sertifikat lainnya</div>
+        <div class="cert-type">// Berbagai instansi pemerintah, universitas &amp; swasta</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTF -->
+<section id="ctf">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">CTF</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="ctf-grid fade-up">
+      <div class="ctf-card">
+        <div class="ctf-rank">#93<span> / 2941</span></div>
+        <div class="ctf-name">NahamCon CTF 2025</div>
+        <div class="ctf-detail">
+          Platform: CTF.NAHAMCON.COM<br>
+          Top 3.2% dari seluruh tim<br>
+          International Competition
         </div>
-    </section>
-
-    <section id="ctf-achievements" class="container">
-        <h2><i class="fas fa-flag-checkered accent"></i> CTF Achievements</h2>
-        <p class="intro-text">Beberapa pencapaian dan penempatan saya dalam kompetisi dan event Capture The Flag (CTF) ditingkat Lokal,Nasional dan Global.</p>
-        <div class="ctf-card-grid">
-            <div class="ctf-card">
-                <img src=" \ctf\nahamcon.jpeg" alt="Sertifikat CTF NahamCon">
-                <div class="card-details">
-                    <h3 class="ctf-name">NAHAMCON CTF 2025</h3>
-                    <p class="ctf-ranking"><i class="fas fa-award"></i><b>Posisi: Peringkat 93 dari 2941 Tim</b></p>
-                    <p class="ctf-platform"><b>Platform: CTF.NAHAMCON.COM</b></p>
-                    <div class="ctf-links">
-                        <a href="\ctf\nahamcon.jpeg" target="_blank" class="btn small-btn primary-btn"><i class="fas fa-certificate"></i> Sertifikat</a>
-                        <a href="https://ctf.nahamcon.com" target="_blank" class="btn small-btn secondary-btn"><i class="fas fa-link"></i> Pertandingan</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="ctf-card">
-                <img src="\ctf\nhnc.jpeg" alt="Sertifikat CTF NHNC">
-                <div class="card-details">
-                    <h3 class="ctf-name">No Hack No CTF 2025</h3>
-                    <p class="ctf-ranking"><i class="fas fa-award"></i><b>Posisi: Peringkat 85 (Top 10%)</b></p>
-                    <p class="ctf-platform">Platform: ICEDTEA & LemonTea</p>
-                    <div class="ctf-links">
-                        <a href="\ctf\nhnc.jpeg" target="_blank" class="btn small-btn primary-btn"><i class="fas fa-certificate"></i> Sertifikat</a>
-                        <a href="https://ic3dt3a.org" target="_blank" class="btn small-btn secondary-btn"><i class="fas fa-link"></i> Pertandingan</a>
-                    </div>
-                </div>
-            </div>
-            <div class="ctf-card">
-                <img src="\ctf\ittsec.jpeg" alt="Sertifikat CTF NHNC">
-                <div class="card-details">
-                    <h3 class="ctf-name">ITTSEC CTF 2025</h3>
-                    <p class="ctf-ranking"><i class="fas fa-award"></i><b>Posisi: Peringkat 44 dari 607 Partisipan </b></p>
-                    <p class="ctf-platform">Organized By : Institut Teknologi Tangerang Selatan</p>
-                    <div class="ctf-links">
-                        <a href="\ctf\ittsec.jpeg" target="_blank" class="btn small-btn primary-btn"><i class="fas fa-certificate"></i> Sertifikat</a>
-                        <a href="https://ctf.ittsec.net/" target="_blank" class="btn small-btn secondary-btn"><i class="fas fa-link"></i> Pertandingan</a>
-                    </div>
-                </div>
-            </div>
-            <div class="ctf-card">
-                <img src="\ctf\bdsec.jpeg" alt="Sertifikat CTF BDSEC">
-                <div class="card-details">
-                    <h3 class="ctf-name">BDSec CTF 2025</h3>
-                    <p class="ctf-ranking"><i class="fas fa-award"></i><b>Posisi: Peringkat 133 dari 642 Teams </b></p>
-                    <p class="ctf-platform">Organized By Knight Squad</p>
-                    <div class="ctf-links">
-                        <a href="\ctf\bdsec.jpeg" target="_blank" class="btn small-btn primary-btn"><i class="fas fa-certificate"></i> Sertifikat</a>
-                        <a href="https://2025.bdsec-ctf.com" target="_blank" class="btn small-btn secondary-btn"><i class="fas fa-link"></i> Pertandingan</a>
-                    </div>
-                </div>
-            </div>
-            
-            </div>
-    </section>
-
-    <section id="testimonial" class="container slider-section">
-        <h2><i class="fas fa-images accent"></i>Gallery</h2>
-        <p class="intro-text">Dokumentasi Perjalanan Saya Sebagai Penetration Tester Independen</p>
-        
-        <div class="gallery-container">
-            <div class="gallery-slider" id="gallery-slider">
-                <!--#1-->
-                <div class="gallery-item">
-                    <img src="\galeri\1.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>KEMENDIKDASMEN</h3>
-                        <p>Foto Bersama (Undangan Kegiatan Paparan Kerentanan)</p>
-                    </div>
-                </div>
-                <!--#2-->
-                <div class="gallery-item">
-                    <img src="\galeri\2.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>KEMENDIKDASMEN</h3>
-                        <p></p>
-                    </div>
-                </div>
-                <!--#3-->
-                <div class="gallery-item">
-                    <img src="\galeri\3.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>KEMENDIKDASMEN</h3>
-                        <p></p>
-                    </div>
-                </div>
-                <!--#4-->
-                <div class="gallery-item">
-                    <img src="\galeri\4.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>Universitas Negeri Yogyakarta</h3>
-                        <p>Gift dari Universitas Negeri Yogyakarta</p>
-                    </div>
-                </div>
-                <!--#5-->
-                <div class="gallery-item">
-                    <img src="\galeri\5.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>KEMENDIKDASMEN</h3>
-                        <p></p>
-                    </div>
-                </div>
-                <!--#6-->
-                <div class="gallery-item">
-                    <img src="\galeri\6.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>KEMENDIKDASMEN</h3>
-                        <p></p>
-                    </div>
-                </div>
-                <!--#7-->
-                <div class="gallery-item">
-                    <img src="\galeri\7.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>KEMENDIKDASMEN</h3>
-                        <p></p>
-                    </div>
-                </div>
-                <!--#9-->
-                <div class="gallery-item">
-                    <img src="\galeri\9.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>BSSN GIFT</h3>
-                        <p>Gift Oleh BSSN Pada Program Voluentary Vulnerability Identification Program</p>
-                    </div>
-                </div>
-                <!--10-->
-                <div class="gallery-item">
-                    <img src="\galeri\10.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>CSIRT DPR RI</h3>
-                        <p>Undangan Oleh CSIRT DPR RI Terkait Laporan Kerentanan.</p>
-                    </div>
-                </div>
-                <!--#11-->
-                <div class="gallery-item">
-                    <img src="\galeri\11.jpeg" width="200" height="200">
-                    <div class="caption">
-                        <h3>CSIRT DPR RI</h3>
-                        <p>Undangan Oleh CSIRT DPR RI Terkait Laporan Kerentanan.</p>
-                    </div>
-                </div>
-
-            </div>
-            
-            <button class="slider-btn prev-btn" id="prev-slide"><i class="fas fa-chevron-left"></i></button>
-            <button class="slider-btn next-btn" id="next-slide"><i class="fas fa-chevron-right"></i></button>
-
+        <a href="https://ctf.nahamcon.com" target="_blank" class="ctf-link">View Competition &rarr;</a>
+      </div>
+      <div class="ctf-card">
+        <div class="ctf-rank">#85<span> top 10%</span></div>
+        <div class="ctf-name">No Hack No CTF 2025</div>
+        <div class="ctf-detail">
+          Platform: ICEDTEA &amp; LemonTea<br>
+          Masuk dalam Top 10%<br>
+          ic3dt3a.org
         </div>
-    </section>
-
-
-    <section id="blog" class="container">
-        <h2><i class="fas fa-feather-alt accent"></i> Blog Pribadi</h2>
-        <div class="blog-grid">
-            <div class="blog-post">
-                <h4>Pico CTF : Ph4nt0m 1ntrud3r</h4>
-                <p class="date">14 April 2025</p>
-                <a href="https://medium.com/@Tanzz1337/picoctf-ph4nt0m-1ntrud3r-f6d37635aed5">Baca Selengkapnya</a>
-            </div>
-            <div class="blog-post">
-                <h4>Writeup CTF: Dokumentasi Write Up dari berbagai Event CTF Yang Diikuti</h4>
-                <p class="date">08 Sept 2025</p>
-                <a href="https://github.com/tanzz1337/Capture-The-Flag">Baca Selengkapnya</a>
-            </div>
+        <a href="https://ic3dt3a.org" target="_blank" class="ctf-link">View Competition &rarr;</a>
+      </div>
+      <div class="ctf-card">
+        <div class="ctf-rank">#44<span> / 607</span></div>
+        <div class="ctf-name">ITTSEC CTF 2025</div>
+        <div class="ctf-detail">
+          Organized by ITTS<br>
+          Institut Teknologi Tangerang Selatan<br>
+          ctf.ittsec.net
         </div>
-    </section>
-
-    <footer id="footer">
-        <div class="social-links">
-            <a href="mailto:baturaja1337@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
-            <a href="https://www.linkedin.com/in/sultanmarlindo" target="_blank"><i class="fab fa-linkedin"></i></a>
-            <!-- <a href="https://twitter.com/YourHandle" target="_blank"><i class="fab fa-twitter"></i></a>
-            <a href="https://hackerone.com/YourProfile" target="_blank"><i class="fas fa-user-ninja"></i></a>  -->
+        <a href="https://ctf.ittsec.net" target="_blank" class="ctf-link">View Competition &rarr;</a>
+      </div>
+      <div class="ctf-card">
+        <div class="ctf-rank">#133<span> / 642</span></div>
+        <div class="ctf-name">BDSec CTF 2025</div>
+        <div class="ctf-detail">
+          Organized by Knight Squad<br>
+          International Competition<br>
+          2025.bdsec-ctf.com
         </div>
-        <p>&copy; 2025 Sultan Raja Marlindo. Built for Security.</p>
-    </footer>
+        <a href="https://2025.bdsec-ctf.com" target="_blank" class="ctf-link">View Competition &rarr;</a>
+      </div>
+      <div class="ctf-card">
+        <div class="ctf-rank">#17<span></span></div>
+        <div class="ctf-name">Lappung CTF 2025</div>
+        <div class="ctf-detail">
+          Organized by Lappung CTF<br>
+          Local CTF Competition<br>
+          2025.bdsec-ctf.com
+        </div>
+        <a href="https://lappungctf.dev" target="_blank" class="ctf-link">View Competition &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <script src="script.js"></script>
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Projects</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid fade-up">
+
+      <!-- WP-AUDIT BLACK BOX -->
+      <div class="project-card">
+        <div class="project-logo-wrap">
+          <svg width="100%" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg">
+            <!-- Shield outer -->
+            <path d="M240 16 L292 38 L292 108 Q292 148 240 164 Q188 148 188 108 L188 38 Z"
+                  fill="#0d0d0d" stroke="#2a2a2a" stroke-width="1.5"/>
+            <!-- Shield inner -->
+            <path d="M240 28 L280 46 L280 108 Q280 138 240 152 Q200 138 200 108 L200 46 Z"
+                  fill="none" stroke="#1e1e1e" stroke-width="0.5"/>
+            <!-- W lettermark -->
+            <polyline points="216,118 224,88 233,104 242,88 251,118"
+                      fill="none" stroke="#42be65" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- P lettermark -->
+            <path d="M257,88 L257,118 M257,88 L270,88 Q278,88 278,100 Q278,112 270,112 L257,112"
+                  fill="none" stroke="#42be65" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Glow dot top of shield -->
+            <circle cx="240" cy="16" r="3" fill="#42be65" opacity="0.6"/>
+            <!-- Horizontal rule -->
+            <line x1="160" y1="172" x2="320" y2="172" stroke="#1e1e1e" stroke-width="0.5"/>
+            <!-- Wordmark -->
+            <text x="240" y="188" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="15"
+                  font-weight="500" letter-spacing="6" fill="#f4f4f4">WP-AUDIT</text>
+            <!-- Tagline -->
+            <text x="240" y="204" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="9"
+                  letter-spacing="3" fill="#42be65">BLACK BOX SCANNER</text>
+            <!-- Side decorators -->
+            <line x1="80" y1="186" x2="192" y2="186" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="82" cy="186" r="2" fill="#2a2a2a"/>
+            <line x1="288" y1="186" x2="400" y2="186" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="398" cy="186" r="2" fill="#2a2a2a"/>
+          </svg>
+        </div>
+        <div class="project-card-body">
+          <div class="project-lang">Python</div>
+          <div class="project-name">Wp-audit — Black Box Scanner</div>
+          <div class="project-desc">
+            Professional WordPress security scanner dengan 120+ checks. Mendeteksi kerentanan
+            via HTTP request eksternal. Output HTML dashboard bergaya Nessus dengan
+            Security Grade A–F dan 18 modul paralel.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span>
+            <span class="project-tag">Black Box</span>
+            <span class="project-tag">Python</span>
+            <span class="project-tag">50+ CVE</span>
+          </div>
+          <a href="https://github.com/tanzz1337/WPSec-Audit" target="_blank" class="project-link">View on GitHub &rarr;</a>
+        </div>
+      </div>
+
+      <!-- WP-AUDIT GREY BOX -->
+      <div class="project-card">
+        <div class="project-logo-wrap">
+          <svg width="100%" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg">
+            <!-- Hexagon -->
+            <polygon points="240,16 288,42 288,94 240,120 192,94 192,42"
+                     fill="#0d0d0d" stroke="#2a2a2a" stroke-width="1.5"/>
+            <polygon points="240,26 278,48 278,90 240,112 202,90 202,48"
+                     fill="none" stroke="#1e1e1e" stroke-width="0.5"/>
+            <!-- Server rack lines inside hex -->
+            <rect x="218" y="52" width="44" height="6" rx="1.5" fill="#161616"/>
+            <rect x="218" y="63" width="36" height="6" rx="1.5" fill="#161616"/>
+            <rect x="218" y="74" width="40" height="6" rx="1.5" fill="#161616"/>
+            <rect x="218" y="85" width="30" height="6" rx="1.5" fill="#161616"/>
+            <!-- Status dots -->
+            <circle cx="224" cy="55" r="2.5" fill="#42be65" opacity="0.9"/>
+            <circle cx="224" cy="66" r="2.5" fill="#42be65" opacity="0.9"/>
+            <circle cx="224" cy="77" r="2.5" fill="#b57bee" opacity="0.9"/>
+            <circle cx="224" cy="88" r="2.5" fill="#f1c21b" opacity="0.9"/>
+            <!-- Corner glow dots on hexagon -->
+            <circle cx="240" cy="16" r="2.5" fill="#b57bee" opacity="0.5"/>
+            <circle cx="288" cy="42" r="2" fill="#b57bee" opacity="0.3"/>
+            <circle cx="192" cy="42" r="2" fill="#b57bee" opacity="0.3"/>
+            <!-- Horizontal rule -->
+            <line x1="160" y1="130" x2="320" y2="130" stroke="#1e1e1e" stroke-width="0.5"/>
+            <!-- Wordmark -->
+            <text x="240" y="148" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="15"
+                  font-weight="500" letter-spacing="5" fill="#f4f4f4">WP-AUDIT</text>
+            <!-- Tagline purple -->
+            <text x="240" y="164" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="9"
+                  letter-spacing="3" fill="#b57bee">GREY BOX AUDITOR</text>
+            <!-- Side decorators -->
+            <line x1="80" y1="146" x2="192" y2="146" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="82" cy="146" r="2" fill="#2a2a2a"/>
+            <line x1="288" y1="146" x2="400" y2="146" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="398" cy="146" r="2" fill="#2a2a2a"/>
+          </svg>
+        </div>
+        <div class="project-card-body">
+          <div class="project-lang">Python</div>
+          <div class="project-name">Wp-audit-grey — Private Grey Box Auditor</div>
+          <div class="project-desc">
+            Internal WordPress security auditor yang membaca langsung dari file system dan
+            database MySQL. Deteksi malware, core integrity check via MD5 checksum,
+            dan audit 14 modul internal tanpa HTTP request.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">Internal Audit</span>
+            <span class="project-tag">Malware Detection</span>
+            <span class="project-tag">MySQL</span>
+            <span class="project-tag">Grey Box</span>
+          </div>
+          <a href="https://github.com/tanzz1337/WPAudit-GreyBox" target="_blank" class="project-link">View on GitHub &rarr;</a>
+        </div>
+      </div>
+
+      <!-- CTF WRITEUPS -->
+      <div class="project-card">
+        <div class="project-logo-wrap">
+          <svg width="100%" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg">
+            <!-- Terminal window -->
+            <rect x="168" y="14" width="144" height="108" rx="6"
+                  fill="#080808" stroke="#2a2a2a" stroke-width="1.2"/>
+            <!-- Titlebar -->
+            <rect x="168" y="14" width="144" height="24" rx="6"
+                  fill="#141414" stroke="none"/>
+            <rect x="168" y="28" width="144" height="10" fill="#141414"/>
+            <line x1="168" y1="38" x2="312" y2="38" stroke="#1e1e1e" stroke-width="0.5"/>
+            <!-- Traffic dots -->
+            <circle cx="182" cy="26" r="4" fill="#ff5f57"/>
+            <circle cx="194" cy="26" r="4" fill="#ffbd2e"/>
+            <circle cx="206" cy="26" r="4" fill="#28c840"/>
+            <!-- Title text -->
+            <text x="260" y="30" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="8"
+                  fill="#444">ctf-writeups</text>
+            <!-- Terminal content lines -->
+            <text x="178" y="52" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#42be65">$ cat flag.txt</text>
+            <text x="178" y="64" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#f1c21b">FLAG{SQLi_byp4ss}</text>
+            <text x="178" y="76" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#42be65">$ ./exploit.py</text>
+            <text x="178" y="88" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#33b1ff">[+] Shell obtained</text>
+            <text x="178" y="100" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#42be65">$ id</text>
+            <text x="178" y="112" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#f4f4f4">uid=0(root)</text>
+            <!-- Cursor -->
+            <rect x="178" y="116" width="7" height="9" rx="1" fill="#42be65" opacity="0.8"/>
+            <!-- Horizontal rule -->
+            <line x1="160" y1="134" x2="320" y2="134" stroke="#1e1e1e" stroke-width="0.5"/>
+            <!-- Wordmark -->
+            <text x="240" y="152" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="15"
+                  font-weight="500" letter-spacing="4" fill="#f4f4f4">CTF WRITEUPS</text>
+            <text x="240" y="168" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="9"
+                  letter-spacing="3" fill="#f1c21b">CAPTURE THE FLAG</text>
+            <!-- Side decorators -->
+            <line x1="60" y1="150" x2="168" y2="150" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="62" cy="150" r="2" fill="#2a2a2a"/>
+            <line x1="312" y1="150" x2="420" y2="150" stroke="#1a1a1a" stroke-width="0.5"/>
+            <circle cx="418" cy="150" r="2" fill="#2a2a2a"/>
+          </svg>
+        </div>
+        <div class="project-card-body">
+          <div class="project-lang">Markdown</div>
+          <div class="project-name">Capture The Flag — CTF Writeups</div>
+          <div class="project-desc">
+            Kumpulan dokumentasi write-up dari berbagai event CTF lokal, nasional,
+            dan internasional. Mencakup Web, Forensics, Crypto, dan OSINT.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">CTF</span>
+            <span class="project-tag">Web Security</span>
+            <span class="project-tag">Writeup</span>
+            <span class="project-tag">OSINT</span>
+          </div>
+          <a href="https://github.com/tanzz1337/Capture-The-Flag" target="_blank" class="project-link">View on GitHub &rarr;</a>
+        </div>
+      </div>
+
+      <!-- PORTFOLIO -->
+      <div class="project-card">
+        <div class="project-logo-wrap">
+          <svg width="100%" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg">
+            <!-- Browser outer -->
+            <rect x="156" y="14" width="168" height="116" rx="7"
+                  fill="#080808" stroke="#2a2a2a" stroke-width="1.2"/>
+            <!-- Titlebar -->
+            <rect x="156" y="14" width="168" height="26" rx="7"
+                  fill="#141414" stroke="none"/>
+            <rect x="156" y="30" width="168" height="10" fill="#141414"/>
+            <line x1="156" y1="40" x2="324" y2="40" stroke="#1e1e1e" stroke-width="0.5"/>
+            <!-- Traffic dots -->
+            <circle cx="170" cy="27" r="4" fill="#ff5f57"/>
+            <circle cx="182" cy="27" r="4" fill="#ffbd2e"/>
+            <circle cx="194" cy="27" r="4" fill="#28c840"/>
+            <!-- URL bar -->
+            <rect x="202" y="19" width="110" height="15" rx="3"
+                  fill="#0d0d0d" stroke="#1e1e1e" stroke-width="0.5"/>
+            <circle cx="210" cy="26.5" r="3" fill="none" stroke="#42be65" stroke-width="0.8" opacity="0.6"/>
+            <text x="228" y="31" font-family="'IBM Plex Mono',monospace" font-size="7.5"
+                  fill="#444">tanzz1337.github.io</text>
+            <!-- Page content -->
+            <!-- Left column: text content -->
+            <text x="168" y="58" font-family="'IBM Plex Mono',monospace"
+                  font-size="10" font-weight="600" fill="#42be65">SULTAN</text>
+            <text x="168" y="70" font-family="'IBM Plex Mono',monospace"
+                  font-size="10" font-weight="600" fill="#f4f4f4">MARLINDO</text>
+            <rect x="168" y="77" width="70" height="3.5" rx="1" fill="#1e1e1e"/>
+            <rect x="168" y="84" width="56" height="3.5" rx="1" fill="#1e1e1e"/>
+            <rect x="168" y="91" width="64" height="3.5" rx="1" fill="#1e1e1e"/>
+            <!-- CTA button -->
+            <rect x="168" y="100" width="48" height="14" rx="3"
+                  fill="#42be65" opacity="0.15" stroke="#42be65" stroke-width="0.5"/>
+            <text x="192" y="111" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="7.5"
+                  fill="#42be65">Hire Me</text>
+            <!-- Right column: stats -->
+            <rect x="260" y="48" width="50" height="48" rx="4"
+                  fill="#0d0d0d" stroke="#1e1e1e" stroke-width="0.5"/>
+            <text x="285" y="64" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="14"
+                  font-weight="600" fill="#42be65">63+</text>
+            <text x="285" y="74" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="6.5"
+                  fill="#555">CERTS</text>
+            <text x="285" y="86" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="12"
+                  font-weight="600" fill="#33b1ff">10</text>
+            <text x="285" y="96" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="6.5"
+                  fill="#555">HOF</text>
+            <!-- Nav dots bottom -->
+            <circle cx="228" cy="125" r="3" fill="#42be65" opacity="0.6"/>
+            <circle cx="238" cy="125" r="2" fill="#333"/>
+            <circle cx="246" cy="125" r="2" fill="#333"/>
+            <!-- Horizontal rule -->
+            <line x1="156" y1="142" x2="324" y2="142" stroke="#1e1e1e" stroke-width="0.5"/>
+            <!-- Wordmark -->
+            <text x="240" y="158" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="15"
+                  font-weight="500" letter-spacing="4" fill="#f4f4f4">PORTFOLIO</text>
+            <text x="240" y="174" text-anchor="middle"
+                  font-family="'IBM Plex Mono',monospace" font-size="9"
+                  letter-spacing="3" fill="#33b1ff">GITHUB PAGES</text>
+          </svg>
+        </div>
+        <div class="project-card-body">
+          <div class="project-lang">HTML / CSS</div>
+          <div class="project-name">tanzz1337.github.io — Portfolio</div>
+          <div class="project-desc">
+            Portfolio website sebagai penetration tester independen. Menampilkan
+            Hall of Fame, 63+ certificate of appreciation, dan pencapaian CTF.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">Portfolio</span>
+            <span class="project-tag">GitHub Pages</span>
+            <span class="project-tag">Frontend</span>
+          </div>
+          <a href="https://github.com/tanzz1337/tanzz1337.github.io" target="_blank" class="project-link">View on GitHub &rarr;</a>
+        </div>
+      </div>
+  <div class="project-card">
+ 
+  <!-- LOGO AREA -->
+  <div class="project-logo-wrap">
+    <svg width="100%" viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg">
+ 
+      <!-- Hexagon outer -->
+      <polygon
+        points="240,16 290,44 290,100 240,128 190,100 190,44"
+        fill="#0d0d0d" stroke="#2a2a2a" stroke-width="1.5"/>
+ 
+      <!-- Hexagon inner -->
+      <polygon
+        points="240,28 278,50 278,96 240,118 202,96 202,50"
+        fill="none" stroke="#1e1e1e" stroke-width="0.5"/>
+ 
+      <!-- Server rack rows inside hexagon -->
+      <rect x="216" y="50" width="48" height="7" rx="2" fill="#141414"/>
+      <rect x="216" y="62" width="40" height="7" rx="2" fill="#141414"/>
+      <rect x="216" y="74" width="44" height="7" rx="2" fill="#141414"/>
+      <rect x="216" y="86" width="36" height="7" rx="2" fill="#141414"/>
+      <rect x="216" y="98" width="42" height="7" rx="2" fill="#141414"/>
+ 
+      <!-- Status dots kiri setiap row -->
+      <circle cx="222" cy="53.5" r="2.5" fill="#ff832b" opacity="0.9"/>
+      <circle cx="222" cy="65.5" r="2.5" fill="#ff832b" opacity="0.9"/>
+      <circle cx="222" cy="77.5" r="2.5" fill="#42be65" opacity="0.9"/>
+      <circle cx="222" cy="89.5" r="2.5" fill="#42be65" opacity="0.9"/>
+      <circle cx="222" cy="101.5" r="2.5" fill="#f1c21b" opacity="0.8"/>
+ 
+      <!-- Koneksi line kiri atas hexagon ke luar -->
+      <line x1="190" y1="44" x2="170" y2="34"
+            stroke="#ff832b" stroke-width="0.5" stroke-dasharray="3 2" opacity="0.4"/>
+      <line x1="190" y1="100" x2="170" y2="110"
+            stroke="#42be65" stroke-width="0.5" stroke-dasharray="3 2" opacity="0.4"/>
+ 
+      <!-- Glow dots di sudut hexagon -->
+      <circle cx="240" cy="16" r="3"  fill="#ff832b" opacity="0.5"/>
+      <circle cx="290" cy="44" r="2"  fill="#ff832b" opacity="0.3"/>
+      <circle cx="290" cy="100" r="2" fill="#ff832b" opacity="0.3"/>
+      <circle cx="240" cy="128" r="3" fill="#ff832b" opacity="0.5"/>
+      <circle cx="190" cy="100" r="2" fill="#ff832b" opacity="0.3"/>
+      <circle cx="190" cy="44" r="2"  fill="#ff832b" opacity="0.3"/>
+ 
+      <!-- Horizontal rule -->
+      <line x1="148" y1="142" x2="332" y2="142"
+            stroke="#1e1e1e" stroke-width="0.5"/>
+ 
+      <!-- Wordmark -->
+      <text x="240" y="158"
+            text-anchor="middle"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="15" font-weight="500"
+            letter-spacing="4" fill="#f4f4f4">APACHE AUDIT</text>
+ 
+      <!-- Tagline oranye -->
+      <text x="240" y="174"
+            text-anchor="middle"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="9" letter-spacing="3"
+            fill="#ff832b">WEB SERVER SECURITY SCANNER</text>
+ 
+      <!-- Side decorators -->
+      <line x1="60"  y1="156" x2="170" y2="156" stroke="#1a1a1a" stroke-width="0.5"/>
+      <circle cx="62"  cy="156" r="2" fill="#2a2a2a"/>
+      <line x1="310" y1="156" x2="420" y2="156" stroke="#1a1a1a" stroke-width="0.5"/>
+      <circle cx="418" cy="156" r="2" fill="#2a2a2a"/>
+    </svg>
+  </div>
+ 
+  <!-- CARD BODY -->
+  <div class="project-card-body">
+    <div class="project-lang">Python</div>
+    <div class="project-name">apache-audit — Apache Security Scanner</div>
+    <div class="project-desc">
+      Scanner keamanan server Apache yang mengaudit konfigurasi,
+      modul aktif, header respons, dan kerentanan umum web server.
+      Output berupa laporan HTML profesional dengan severity grading.
+    </div>
+    <div class="project-tags">
+      <span class="project-tag">Apache</span>
+      <span class="project-tag">Web Server</span>
+      <span class="project-tag">Python</span>
+      <span class="project-tag">Config Audit</span>
+    </div>
+    <a href="https://github.com/tanzz1337" target="_blank" class="project-link">
+      View on GitHub &rarr;
+    </a>
+  </div> 
+</div>
+
+<div class="project-card">
+ 
+  <!-- LOGO AREA -->
+  <div class="project-logo-wrap">
+    <svg width="100%" viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg">
+ 
+      <!-- Terminal window outer -->
+      <rect x="158" y="14" width="164" height="116" rx="7"
+            fill="#080808" stroke="#2a2a2a" stroke-width="1.2"/>
+ 
+      <!-- Titlebar fill -->
+      <rect x="158" y="14" width="164" height="26" rx="7"
+            fill="#141414" stroke="none"/>
+      <!-- Cover bottom rounded corners of titlebar -->
+      <rect x="158" y="30" width="164" height="10" fill="#141414"/>
+      <!-- Titlebar bottom border -->
+      <line x1="158" y1="40" x2="322" y2="40"
+            stroke="#1e1e1e" stroke-width="0.5"/>
+ 
+      <!-- Traffic light dots -->
+      <circle cx="173" cy="27" r="4" fill="#ff5f57"/>
+      <circle cx="185" cy="27" r="4" fill="#ffbd2e"/>
+      <circle cx="197" cy="27" r="4" fill="#28c840"/>
+ 
+      <!-- Window title text -->
+      <text x="260" y="31"
+            text-anchor="middle"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8" fill="#444">log-scanner</text>
+ 
+      <!-- Log line 1: INFO -->
+      <text x="168" y="56"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#555">[2025-03-22 09:14:02]</text>
+      <text x="168" y="67"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#42be65">[INFO]</text>
+      <text x="204" y="67"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#a8a8a8">200 GET /index.php</text>
+ 
+      <!-- Log line 2: WARN -->
+      <text x="168" y="79"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#555">[2025-03-22 09:14:08]</text>
+      <text x="168" y="90"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#f1c21b">[WARN]</text>
+      <text x="205" y="90"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#a8a8a8">403 GET /.env</text>
+ 
+      <!-- Log line 3: ALERT merah -->
+      <text x="168" y="102"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#555">[2025-03-22 09:14:11]</text>
+      <text x="168" y="113"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#fa4d56">[ALERT]</text>
+      <text x="208" y="113"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="8.5" fill="#fa4d56">SQLi detected: ?id=1'</text>
+ 
+      <!-- Cursor blink -->
+      <rect x="168" y="119" width="7" height="9" rx="1"
+            fill="#33b1ff" opacity="0.8"/>
+ 
+      <!-- Magnifier overlapping terminal bottom-right -->
+      <circle cx="306" cy="116" r="32"
+              fill="#0a0a0a" stroke="#2a2a2a" stroke-width="1.5"/>
+      <circle cx="306" cy="116" r="24"
+              fill="none" stroke="#1e1e1e" stroke-width="0.5"/>
+      <!-- Handle magnifier -->
+      <line x1="326" y1="136" x2="344" y2="154"
+            stroke="#2a2a2a" stroke-width="4" stroke-linecap="round"/>
+      <line x1="326" y1="136" x2="344" y2="154"
+            stroke="#33b1ff" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      <!-- Mini log lines inside magnifier -->
+      <rect x="289" y="103" width="34" height="5" rx="1.5" fill="#141414"/>
+      <rect x="289" y="112" width="26" height="5" rx="1.5"
+            fill="#fa4d56" opacity="0.3"/>
+      <rect x="289" y="121" width="30" height="5" rx="1.5" fill="#141414"/>
+ 
+      <!-- Horizontal rule -->
+      <line x1="140" y1="144" x2="340" y2="144"
+            stroke="#1e1e1e" stroke-width="0.5"/>
+ 
+      <!-- Wordmark -->
+      <text x="240" y="160"
+            text-anchor="middle"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="15" font-weight="500"
+            letter-spacing="4" fill="#f4f4f4">LOG SCANNER</text>
+ 
+      <!-- Tagline biru -->
+      <text x="240" y="176"
+            text-anchor="middle"
+            font-family="'IBM Plex Mono',monospace"
+            font-size="9" letter-spacing="3"
+            fill="#33b1ff">SERVER LOG SECURITY ANALYZER</text>
+ 
+      <!-- Side decorators -->
+      <line x1="50"  y1="158" x2="162" y2="158" stroke="#1a1a1a" stroke-width="0.5"/>
+      <circle cx="52"  cy="158" r="2" fill="#2a2a2a"/>
+      <line x1="318" y1="158" x2="430" y2="158" stroke="#1a1a1a" stroke-width="0.5"/>
+      <circle cx="428" cy="158" r="2" fill="#2a2a2a"/>
+    </svg>
+  </div>
+ 
+  <!-- CARD BODY -->
+  <div class="project-card-body">
+    <div class="project-lang">Python</div>
+    <div class="project-name">log-scanner — Server Log Analyzer</div>
+    <div class="project-desc">
+      Analyzer log server untuk mendeteksi pola serangan, akses mencurigakan,
+      SQL Injection, path traversal, dan brute force dari file access log
+      Apache/Nginx. Output laporan dengan timeline serangan.
+    </div>
+    <div class="project-tags">
+      <span class="project-tag">Log Analysis</span>
+      <span class="project-tag">Apache</span>
+      <span class="project-tag">Nginx</span>
+      <span class="project-tag">Threat Detection</span>
+    </div>
+    <a href="https://github.com/tanzz1337/LogScanner" target="_blank" class="project-link">
+      View on GitHub &rarr;
+    </a>
+  </div>
+ <!--next projects disini-->
+</div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Blog</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="blog-list fade-up">
+      <a href="https://medium.com/@Tanzz1337/picoctf-ph4nt0m-1ntrud3r-f6d37635aed5" target="_blank" class="blog-item">
+        <div class="blog-date">14 Apr 2025</div>
+        <div class="blog-divider"></div>
+        <div class="blog-title">PicoCTF: Ph4nt0m 1ntrud3r — Writeup</div>
+        <div class="blog-arrow">&rarr;</div>
+      </a>
+      <a href="https://github.com/tanzz1337/Capture-The-Flag" target="_blank" class="blog-item">
+        <div class="blog-date">08 Sep 2025</div>
+        <div class="blog-divider"></div>
+        <div class="blog-title">CTF Writeup Collection — Berbagai Event Kompetisi</div>
+        <div class="blog-arrow">&rarr;</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="contact-inner fade-up">
+      <div class="contact-label">// Let's Connect</div>
+      <h2 class="contact-title">Get In Touch</h2>
+      <p class="contact-sub">
+        Tertarik untuk bekerja sama dalam security assessment, bug bounty, atau CTF?
+        Saya terbuka untuk diskusi dan kolaborasi.
+      </p>
+      <div class="contact-links">
+        <a href="https://linkedin.com/in/sultanmarlindo" target="_blank" class="contact-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          LinkedIn
+        </a>
+        <a href="https://instagram.com/@qoeiznzkeb" target="_blank" class="contact-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://github.com/tanzz1337" target="_blank" class="contact-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="https://medium.com/@Tanzz1337" target="_blank" class="contact-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
+          </svg>
+          Medium
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-text">&copy; 2025 <span>Sultan Raja Marlindo</span> — Built for Security</div>
+  <div class="footer-text">tanzz1337 &mdash; Web Pentester &amp; Security Researcher</div>
+</footer>
+
+<script>
+// Intersection Observer for fade-up animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Active nav link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.topbar-nav a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    if (window.scrollY >= section.offsetTop - 80) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.style.color = link.getAttribute('href') === '#' + current
+      ? 'var(--green)'
+      : '';
+  });
+});
+
+// ── TERMINAL HACKING ANIMATION ─────────────────────────────────────────
+const termOutput = document.getElementById('termOutput');
+
+// Lines: each entry = [delay_ms, html_content]
+const TERM_SCRIPT = [
+  [0,    '<span class="prompt">┌──(tanzz1337㉿kali)-[~/pentest/target]</span>'],
+  [200,  '<span class="prompt">└─</span><span class="bold">$</span> <span class="white">nmap -sV -sC -p80,443,8080 target.go.id</span>'],
+  [900,  '<span class="dim">Starting Nmap 7.94 ( https://nmap.org )</span>'],
+  [1200, '<span class="dim">Nmap scan report for target.go.id (103.x.x.x)</span>'],
+  [1500, '<span class="white">PORT    STATE SERVICE  VERSION</span>'],
+  [1700, '<span class="cyan">80/tcp  open  http     Apache 2.4.41</span>'],
+  [1900, '<span class="cyan">443/tcp open  https    nginx 1.18.0</span>'],
+  [2100, '<span class="yellow">8080/tcp open http    Apache Tomcat 9.0.37</span>'],
+  [2400, ''],
+  [2500, '<span class="prompt">┌──(tanzz1337㉿kali)-[~/pentest/target]</span>'],
+  [2600, '<span class="prompt">└─</span><span class="bold">$</span> <span class="white">python3 wp-audit.py https://target.go.id -v</span>'],
+  [3200, '<span class="dim">[*] Building baseline fingerprint...</span>'],
+  [3600, '<span class="dim">[*] WordPress detected — starting audit...</span>'],
+  [4000, '<span class="dim">[+] Running 18 modules (parallel)...</span>'],
+  [4400, ''],
+  [4600, '<span class="yellow">[!] WordPress version 5.7.2 exposed in meta tag</span>'],
+  [4900, '<span class="yellow">[!] XML-RPC enabled — multicall active</span>'],
+  [5200, '<span class="red">[CRITICAL] wp-config.php backup accessible</span>'],
+  [5500, '<span class="red">[CRITICAL] SQL Injection found in ?id= param</span>'],
+  [5800, '<span class="red">[CRITICAL] IDOR — /api/user/{id} unauthenticated</span>'],
+  [6200, ''],
+  [6400, '<span class="dim">[*] Generating report...</span>'],
+  [6800, '<span class="cyan">[+] Score: 23/100 — Grade: F</span>'],
+  [7000, '<span class="cyan">[+] Report saved: audit_report.html</span>'],
+  [7300, ''],
+  [7600, '<span class="prompt">┌──(tanzz1337㉿kali)-[~/pentest/target]</span>'],
+  [7700, '<span class="prompt">└─</span><span class="bold">$</span> <span class="white">sqlmap -u "https://target.go.id/?id=1" --dbs</span>'],
+  [8300, '<span class="dim">[*] testing connection to target...</span>'],
+  [8600, '<span class="dim">[*] heuristic (basic) test shows parameter</span>'],
+  [8900, '<span class="yellow">[!] parameter \'id\' appears to be injectable</span>'],
+  [9200, '<span class="red">[VULN] GET parameter \'id\' is vulnerable</span>'],
+  [9500, '<span class="cyan">available databases [3]:</span>'],
+  [9700, '<span class="white">  [*] information_schema</span>'],
+  [9900, '<span class="white">  [*] wordpress_db</span>'],
+  [10100,'<span class="white">  [*] target_internal</span>'],
+  [10400,''],
+  [10700,'<span class="dim">[*] Preparing responsible disclosure report...</span>'],
+  [11100,'<span class="cyan">[+] CVE documented — CVSS Score: 9.8 Critical</span>'],
+  [11400,'<span class="green bold">[+] Report sent to CSIRT. Awaiting response...</span>'],
+  [11700,''],
+  [12000,'<span class="prompt">┌──(tanzz1337㉿kali)-[~/pentest/target]</span>'],
+  [12100,'<span class="prompt">└─</span><span class="bold">$</span> <span class="white">■</span>'],
+];
+
+let lineIndex = 0;
+
+function typeChar(el, text, i, cb) {
+  if (i >= text.length) { if (cb) cb(); return; }
+  // For HTML we just set innerHTML instantly per line (typewriter per line)
+  el.innerHTML = text;
+  if (cb) setTimeout(cb, 0);
+}
+
+function addLine(html, cb) {
+  const line = document.createElement('div');
+  line.className = 'term-line';
+  // Typewriter: reveal characters one by one for command lines
+  termOutput.appendChild(line);
+
+  // Scroll to bottom
+  const body = termOutput.parentElement;
+  body.scrollTop = body.scrollHeight;
+
+  // Instant for non-command lines
+  const isCommand = html.includes('$</span> <span class="white">');
+  if (isCommand) {
+    // Strip to get plain text length for typewriter effect
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+    const plainLen = temp.textContent.length;
+    let charI = 0;
+    line.style.opacity = '1';
+    const interval = setInterval(() => {
+      charI++;
+      // Reveal by clipping — approximate by showing partial HTML
+      line.innerHTML = html;
+      line.style.clipPath = `inset(0 ${Math.max(0, 100 - (charI / plainLen) * 100)}% 0 0)`;
+      body.scrollTop = body.scrollHeight;
+      if (charI >= plainLen) {
+        clearInterval(interval);
+        line.style.clipPath = '';
+        if (cb) cb();
+      }
+    }, 28);
+  } else {
+    line.innerHTML = html;
+    line.style.opacity = '1';
+    body.scrollTop = body.scrollHeight;
+    if (cb) setTimeout(cb, 0);
+  }
+}
+
+function runTerminal() {
+  if (lineIndex >= TERM_SCRIPT.length) {
+    // Restart after pause
+    setTimeout(() => {
+      termOutput.innerHTML = '';
+      lineIndex = 0;
+      runTerminal();
+    }, 3000);
+    return;
+  }
+
+  const [delay, html] = TERM_SCRIPT[lineIndex];
+  lineIndex++;
+
+  setTimeout(() => {
+    addLine(html, runTerminal);
+  }, lineIndex === 1 ? delay : (TERM_SCRIPT[lineIndex - 1][0] - (TERM_SCRIPT[lineIndex - 2]?.[0] || 0)));
+}
+
+// Stagger based on absolute timestamps
+function runTerminalAbsolute() {
+  termOutput.innerHTML = '';
+  TERM_SCRIPT.forEach(([delay, html]) => {
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.className = 'term-line show';
+      line.innerHTML = html;
+      termOutput.appendChild(line);
+      termOutput.parentElement.scrollTop = termOutput.parentElement.scrollHeight;
+    }, delay);
+  });
+
+  // Restart
+  const total = TERM_SCRIPT[TERM_SCRIPT.length - 1][0];
+  setTimeout(() => runTerminalAbsolute(), total + 3500);
+}
+
+// Start after page loads
+setTimeout(runTerminalAbsolute, 600);
+</script>
 </body>
-
 </html>
