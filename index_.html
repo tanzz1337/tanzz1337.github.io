@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sultan Raja Marlindo — Web Penetration Tester & Security Researcher. Melaporkan kerentanan kepada 60+ instansi di Indonesia dan global." />
+  <meta name="keywords" content="penetration tester, bug hunter, web security, CTF, OWASP, Indonesia" />
+  <meta property="og:title" content="Sultan Raja Marlindo — Penetration Tester" />
+  <meta property="og:description" content="Web AppSec / Bug Hunter / CTF Player" />
+  <meta property="og:url" content="https://tanzz1337.github.io" />
+  <title>Sultan Raja Marlindo — Penetration Tester</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0a;
+      --bg2:       #0f0f0f;
+      --bg3:       #141414;
+      --surface:   #1a1a1a;
+      --border:    #222;
+      --border2:   #2a2a2a;
+      --green:     #00ff88;
+      --green-dim: #00cc6a;
+      --green-glow:#00ff8833;
+      --cyan:      #00d4ff;
+      --red:       #ff4757;
+      --yellow:    #ffd32a;
+      --text:      #e0e0e0;
+      --text-dim:  #888;
+      --text-muted:#555;
+      --font-mono: 'JetBrains Mono', 'Space Mono', monospace;
+      --radius:    4px;
+      --transition: 0.2s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    a { color: var(--green); text-decoration: none; transition: color var(--transition); }
+    a:hover { color: var(--cyan); }
+    a:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* ─── SCROLLBAR ────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--green-dim); }
+
+    /* ─── NAV ──────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+    }
+    .nav-logo::before { content: '$ '; color: var(--text-muted); }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--green); }
+
+    /* hamburger */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text-dim);
+      transition: all var(--transition);
+    }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 768px) {
+      .nav-toggle { display: flex; }
+      .nav-links {
+        position: fixed;
+        top: 56px; left: 0; right: 0;
+        background: rgba(10,10,10,0.98);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0;
+        padding: 1rem 0;
+        transform: translateY(-110%);
+        transition: transform 0.3s ease;
+      }
+      .nav-links.open { transform: translateY(0); }
+      .nav-links li { padding: 0; }
+      .nav-links a {
+        display: block;
+        padding: 0.75rem 2rem;
+        font-size: 13px;
+      }
+    }
+
+    /* ─── LAYOUT ───────────────────────────────────────────── */
+    main { padding-top: 56px; }
+
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+
+    .section-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::before {
+      content: attr(data-num);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── HERO ─────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 56px;
+      position: relative;
+      overflow: hidden;
+      max-width: 100%;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--green-glow) 0%, transparent 70%);
+      pointer-events: none;
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50%       { opacity: 0.8; transform: scale(1.05); }
+    }
+
+    .hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      width: 100%;
+    }
+
+    .hero-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border2);
+      padding: 0.4rem 0.8rem;
+      border-radius: 2px;
+    }
+    .hero-status .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .hero-prompt {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .hero-prompt::before { content: '$ cat /etc/security/profile.txt'; }
+
+    .hero-name {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-role {
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      color: var(--green);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-bio {
+      font-size: 13px;
+      color: var(--text-dim);
+      max-width: 580px;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      border-left: 2px solid var(--border2);
+      padding-left: 1rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+      font-weight: 700;
+      border: 1px solid var(--green);
+    }
+    .btn-primary:hover {
+      background: var(--cyan);
+      border-color: var(--cyan);
+      color: #000;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border2);
+    }
+    .btn-outline:hover {
+      border-color: var(--green);
+      color: var(--green);
+      transform: translateY(-1px);
+    }
+
+    /* floating terminal badge */
+    .hero-terminal {
+      position: absolute;
+      bottom: 8%;
+      right: 5%;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      font-size: 11px;
+      color: var(--text-dim);
+      min-width: 200px;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-6px); }
+    }
+    .hero-terminal .t-header {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 0.6rem;
+      align-items: center;
+    }
+    .hero-terminal .t-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .t-red    { background: #ff5f57; }
+    .t-yellow { background: #febc2e; }
+    .t-green  { background: #28c840; }
+    .t-title  { font-size: 10px; color: var(--text-muted); margin-left: 4px; letter-spacing: 0.05em; }
+    .t-line   { margin-bottom: 2px; }
+    .t-line .green { color: var(--green); }
+    .t-line .red   { color: var(--red); }
+    .t-line .cyan  { color: var(--cyan); }
+    .cursor {
+      display: inline-block;
+      width: 7px; height: 1em;
+      background: var(--green);
+      vertical-align: text-bottom;
+      animation: cursor-blink 1s step-end infinite;
+    }
+    @keyframes cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    @media (max-width: 600px) {
+      .hero-terminal { display: none; }
+      #hero::before { display: none; }
+    }
+
+    /* ─── ABOUT ────────────────────────────────────────────── */
+    #about h2 {
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1.5rem;
+    }
+
+    #about p {
+      color: var(--text-dim);
+      font-size: 13px;
+      line-height: 1.9;
+      margin-bottom: 1rem;
+      max-width: 660px;
+    }
+
+    .skills-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin: 2rem 0 1rem;
+    }
+    .skills-label::before { content: '// '; color: var(--border2); }
+
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .skill-tag {
+      padding: 0.35rem 0.7rem;
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      transition: all var(--transition);
+      cursor: default;
+    }
+    .skill-tag:hover {
+      border-color: var(--green);
+      color: var(--green);
+      background: var(--green-glow);
+    }
+
+    /* ─── HALL OF FAME ─────────────────────────────────────── */
+    .hof-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .hof-item {
+      background: var(--bg2);
+      padding: 1.25rem 1.5rem;
+      transition: background var(--transition);
+      position: relative;
+    }
+    .hof-item:hover { background: var(--surface); }
+    .hof-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: transparent;
+      transition: background var(--transition);
+    }
+    .hof-item:hover::before { background: var(--green); }
+
+    .hof-date {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+    .hof-org {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    .hof-badge {
+      display: inline-block;
+      font-size: 9px;
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .badge-gov      { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
+    .badge-tech     { background: rgba(0,212,255,0.1); color: var(--cyan);  border: 1px solid rgba(0,212,255,0.2); }
+    .badge-bumn     { background: rgba(255,215,0,0.1); color: var(--yellow);border: 1px solid rgba(255,215,0,0.2); }
+    .badge-uni      { background: rgba(255,71,87,0.1); color: var(--red);   border: 1px solid rgba(255,71,87,0.2); }
+    .badge-bumd     { background: rgba(255,215,0,0.1); color: var(--yellow);border: 1px solid rgba(255,215,0,0.2); }
+    .badge-edu      { background: rgba(0,212,255,0.1); color: var(--cyan);  border: 1px solid rgba(0,212,255,0.2); }
+
+    /* ─── AWARDS ───────────────────────────────────────────── */
+    .awards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+
+    .award-item {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+      align-items: start;
+    }
+    .award-item:last-child { border-bottom: none; }
+    .award-item:hover { background: var(--surface); }
+
+    .award-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding-top: 2px;
+      white-space: nowrap;
+    }
+    .award-org {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .award-type {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .award-type::before { content: '// '; color: var(--border2); }
+
+    .awards-more {
+      padding: 1rem 1.25rem;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-style: italic;
+      background: var(--bg3);
+    }
+
+    @media (max-width: 500px) {
+      .award-item { grid-template-columns: 1fr; gap: 0.25rem; }
+    }
+
+    /* ─── CTF ──────────────────────────────────────────────── */
+    .ctf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .ctf-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .ctf-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--green), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .ctf-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .ctf-card:hover::before { opacity: 1; }
+
+    .ctf-rank {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 0.5rem;
+    }
+    .ctf-event {
+      font-size: 13px;
+      color: #fff;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    .ctf-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+    .ctf-link {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      border: 1px solid var(--border2);
+      padding: 0.3rem 0.6rem;
+      border-radius: 2px;
+      transition: all var(--transition);
+      display: inline-block;
+    }
+    .ctf-link:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* ─── PROJECTS ─────────────────────────────────────────── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .project-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: all var(--transition);
+    }
+    .project-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .project-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .project-icon {
+      font-size: 1.2rem;
+      opacity: 0.7;
+    }
+    .project-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .project-subtitle {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .project-lang {
+      font-size: 10px;
+      color: var(--cyan);
+      border: 1px solid rgba(0,212,255,0.2);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .project-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      flex: 1;
+    }
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .project-tag {
+      font-size: 10px;
+      color: var(--text-muted);
+      border: 1px solid var(--border2);
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+    .project-link {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      transition: color var(--transition);
+      margin-top: auto;
+    }
+    .project-link:hover { color: var(--green); }
+    .project-link::before { content: '→ '; }
+
+    /* ─── BLOG ─────────────────────────────────────────────── */
+    .blog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+
+    .blog-item {
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      transition: background var(--transition);
+      text-decoration: none;
+    }
+    .blog-item:last-child { border-bottom: none; }
+    .blog-item:hover { background: var(--surface); }
+    .blog-date {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .blog-title {
+      font-size: 13px;
+      color: var(--text);
+      transition: color var(--transition);
+    }
+    .blog-item:hover .blog-title { color: var(--green); }
+    .blog-arrow {
+      color: var(--text-muted);
+      font-size: 16px;
+      transition: transform var(--transition), color var(--transition);
+    }
+    .blog-item:hover .blog-arrow {
+      transform: translateX(4px);
+      color: var(--green);
+    }
+
+    @media (max-width: 500px) {
+      .blog-item { grid-template-columns: 1fr auto; }
+      .blog-date { display: none; }
+    }
+
+    /* ─── CONTACT ──────────────────────────────────────────── */
+    #contact {
+      text-align: center;
+      padding-bottom: 8rem;
+    }
+    #contact h2 {
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+    #contact p {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.8;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      color: var(--text-dim);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      transition: all var(--transition);
+    }
+    .social-link:hover {
+      border-color: var(--green);
+      color: var(--green);
+      transform: translateY(-2px);
+    }
+
+    /* ─── FOOTER ───────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    footer span { color: var(--text-muted); }
+
+    /* ─── DIVIDER ──────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ─── FADE IN ANIMATION ────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ── NAV ── -->
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="nav-logo">tanzz1337</div>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" role="list">
+      <li><a href="#about">About</a></li>
+      <li><a href="#hof">Hall of Fame</a></li>
+      <li><a href="#awards">Awards</a></li>
+      <li><a href="#ctf">CTF</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <!-- ── HERO ── -->
+    <section id="hero" aria-label="Hero">
+      <div class="hero-inner">
+        <div class="hero-status">
+          <span class="dot" aria-hidden="true"></span>
+          Available for work
+        </div>
+
+        <div class="hero-prompt" aria-hidden="true"></div>
+
+        <h1 class="hero-name">Sultan Raja Marlindo</h1>
+        <p class="hero-role">Web AppSec / Bug Hunter / CTF Player</p>
+
+        <p class="hero-bio">
+          Web Penetration Tester dengan fokus pada identifikasi dan eksploitasi kerentanan aplikasi web,
+          khususnya OWASP Top 10. Telah melaporkan kerentanan kepada lebih dari 60 instansi pemerintah,
+          BUMN, universitas, dan perusahaan swasta di Indonesia dan global.
+        </p>
+
+        <div class="hero-stats" aria-label="Statistics">
+          <div class="stat">
+            <span class="stat-value">63+</span>
+            <span class="stat-label">Certificate of Appreciation</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">10</span>
+            <span class="stat-label">Hall of Fame</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">4</span>
+            <span class="stat-label">CTF Achievements</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">Top</span>
+            <span class="stat-label">93 / 2941 NahamCon</span>
+          </div>
+        </div>
+
+        <div class="hero-cta">
+          <a href="#contact" class="btn btn-primary">Get in Touch</a>
+          <a href="https://github.com/tanzz1337" target="_blank" rel="noopener noreferrer" class="btn btn-outline">GitHub Profile</a>
+        </div>
+      </div>
+
+      <!-- floating terminal -->
+      <div class="hero-terminal" aria-hidden="true">
+        <div class="t-header">
+          <span class="t-dot t-red"></span>
+          <span class="t-dot t-yellow"></span>
+          <span class="t-dot t-green"></span>
+          <span class="t-title">tanzz1337@kali: ~/pentest</span>
+        </div>
+        <div class="t-line"><span class="green">$</span> sqlmap --batch --dbs</div>
+        <div class="t-line"><span class="red">[VULN]</span> SQLi Detected</div>
+        <div class="t-line"><span class="green">$</span> xss-scan --target app</div>
+        <div class="t-line"><span class="cyan">[INFO]</span> XSS Confirmed</div>
+        <div class="t-line"><span class="green">$</span> <span class="cursor"></span></div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── ABOUT ── -->
+    <section id="about" class="fade-in">
+      <p class="section-label" data-num="01">About</p>
+      <h2>Penetration Tester &amp; Security Researcher</h2>
+
+      <p>
+        Saya adalah seorang Web Penetration Tester independen yang berspesialisasi dalam
+        identifikasi kerentanan pada aplikasi web berbasis OWASP Top 10. Dengan pengalaman
+        melaporkan kerentanan kepada instansi pemerintah tingkat nasional hingga BUMN dan
+        universitas, saya memahami standar disclosure yang bertanggung jawab.
+      </p>
+      <p>
+        Selain web security assessment, saya aktif berpartisipasi dalam kompetisi
+        Capture The Flag (CTF) di tingkat lokal, nasional, dan internasional —
+        meraih peringkat top 5% di beberapa event global.
+      </p>
+      <p>
+        Fokus utama: SQL Injection, XSS, API Security, IDOR, dan Source Code Review.
+        Saya percaya bahwa setiap laporan kerentanan harus disertai dengan bukti yang
+        jelas dan rekomendasi mitigasi yang actionable.
+      </p>
+
+      <p class="skills-label">Technical Skills</p>
+      <div class="skills-grid" role="list" aria-label="Technical skills">
+        <span class="skill-tag" role="listitem">SQL Injection</span>
+        <span class="skill-tag" role="listitem">XSS</span>
+        <span class="skill-tag" role="listitem">Burp Suite</span>
+        <span class="skill-tag" role="listitem">Python</span>
+        <span class="skill-tag" role="listitem">API Security</span>
+        <span class="skill-tag" role="listitem">Code Review</span>
+        <span class="skill-tag" role="listitem">Nmap</span>
+        <span class="skill-tag" role="listitem">Linux</span>
+        <span class="skill-tag" role="listitem">IDOR</span>
+        <span class="skill-tag" role="listitem">OWASP Top 10</span>
+        <span class="skill-tag" role="listitem">CSRF</span>
+        <span class="skill-tag" role="listitem">SSRF</span>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── HALL OF FAME ── -->
+    <section id="hof" class="fade-in">
+      <p class="section-label" data-num="02">Hall of Fame</p>
+
+      <div class="hof-grid" role="list" aria-label="Hall of Fame entries">
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">Agustus 2023</div>
+          <div class="hof-org">Badan Pemeriksaan Keuangan RI</div>
+          <span class="hof-badge badge-gov">Government</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">September 2023</div>
+          <div class="hof-org">Google — Honorable Mentions</div>
+          <span class="hof-badge badge-tech">Global Tech</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">Oktober 2023</div>
+          <div class="hof-org">Perum Perhutani</div>
+          <span class="hof-badge badge-bumn">BUMN</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">November 2023</div>
+          <div class="hof-org">Universitas Bhayangkara Jakarta</div>
+          <span class="hof-badge badge-uni">University</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">April 2024</div>
+          <div class="hof-org">Lenovo — Global Personal Technology</div>
+          <span class="hof-badge badge-tech">Global Tech</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">Desember 2024</div>
+          <div class="hof-org">PT Transportasi Jakarta / Transjakarta</div>
+          <span class="hof-badge badge-bumd">BUMD</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">Desember 2023</div>
+          <div class="hof-org">EUFY Security</div>
+          <span class="hof-badge badge-tech">Global Tech</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">April 2025</div>
+          <div class="hof-org">CSIRT Universitas Teknokrat</div>
+          <span class="hof-badge badge-uni">University</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">Oktober 2025</div>
+          <div class="hof-org">Tim Tanggap Insiden Siber Kukar Kab.</div>
+          <span class="hof-badge badge-gov">Government</span>
+        </div>
+        <div class="hof-item" role="listitem">
+          <div class="hof-date">Oktober 2025</div>
+          <div class="hof-org">Politeknik Siber Cerdika Internasional</div>
+          <span class="hof-badge badge-edu">Education</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── AWARDS ── -->
+    <section id="awards" class="fade-in">
+      <p class="section-label" data-num="03">Awards</p>
+
+      <div class="awards-list" role="list" aria-label="Awards and certificates">
+        <div class="award-item" role="listitem">
+          <div class="award-date">20 Sep 2023</div>
+          <div>
+            <div class="award-org">Badan Siber dan Sandi Negara</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">27 Feb 2024</div>
+          <div>
+            <div class="award-org">BSSN — VVIP Program</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">23 Okt 2025</div>
+          <div>
+            <div class="award-org">CSIRT Badan Siber dan Sandi Negara</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">6 Jun 2024</div>
+          <div>
+            <div class="award-org">Kementerian Pendidikan, Kebudayaan, Riset dan Teknologi</div>
+            <div class="award-type">Pemerhati Keamanan Siber</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">14 Jun 2024</div>
+          <div>
+            <div class="award-org">Kominfo DIY</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">8 Jun 2024</div>
+          <div>
+            <div class="award-org">Kementerian Komunikasi dan Informatika RI</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">5 Mar 2024</div>
+          <div>
+            <div class="award-org">Kementerian Kesehatan RI</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">6 Sep 2024</div>
+          <div>
+            <div class="award-org">Kementerian Koordinator Bidang Kemaritiman dan Investasi</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">22 Apr 2024</div>
+          <div>
+            <div class="award-org">Institut Teknologi Bandung (ITB)</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">27 Des 2024</div>
+          <div>
+            <div class="award-org">Universitas Airlangga</div>
+            <div class="award-type">Certificate of Achievement</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">14 Des 2023</div>
+          <div>
+            <div class="award-org">Pustekinfo DPR RI</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">14 Ags 2024</div>
+          <div>
+            <div class="award-org">Kominfo Provinsi Jawa Timur</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">22 Mei 2024</div>
+          <div>
+            <div class="award-org">Kominfo Provinsi Jawa Barat</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">21 Apr 2025</div>
+          <div>
+            <div class="award-org">PPATK</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">21 Ags 2025</div>
+          <div>
+            <div class="award-org">BMKG</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">23 Des 2024</div>
+          <div>
+            <div class="award-org">PT Transportasi Jakarta (Transjakarta)</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="award-item" role="listitem">
+          <div class="award-date">15 Apr 2025</div>
+          <div>
+            <div class="award-org">Komisi Penyiaran Indonesia</div>
+            <div class="award-type">Certificate of Appreciation</div>
+          </div>
+        </div>
+        <div class="awards-more" role="listitem">
+          2022 — 2025 &nbsp;·&nbsp; + 45 sertifikat lainnya — Berbagai instansi pemerintah, universitas &amp; swasta
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── CTF ── -->
+    <section id="ctf" class="fade-in">
+      <p class="section-label" data-num="04">CTF</p>
+
+      <div class="ctf-grid">
+        <article class="ctf-card">
+          <div class="ctf-rank">#93 / 2941</div>
+          <div class="ctf-event">NahamCon CTF 2025</div>
+          <div class="ctf-meta">
+            Platform: ctf.nahamcon.com<br />
+            Top 3.2% dari seluruh tim<br />
+            International Competition
+          </div>
+          <a href="https://ctf.nahamcon.com" target="_blank" rel="noopener noreferrer" class="ctf-link">View Competition →</a>
+        </article>
+
+        <article class="ctf-card">
+          <div class="ctf-rank">#85 top 10%</div>
+          <div class="ctf-event">No Hack No CTF 2025</div>
+          <div class="ctf-meta">
+            Platform: ICEDTEA &amp; LemonTea<br />
+            Masuk dalam Top 10%<br />
+            ic3dt3a.org
+          </div>
+          <a href="https://ic3dt3a.org" target="_blank" rel="noopener noreferrer" class="ctf-link">View Competition →</a>
+        </article>
+
+        <article class="ctf-card">
+          <div class="ctf-rank">#44 / 607</div>
+          <div class="ctf-event">ITTSEC CTF 2025</div>
+          <div class="ctf-meta">
+            Organized by ITTS<br />
+            Institut Teknologi Tangerang Selatan<br />
+            ctf.ittsec.net
+          </div>
+          <a href="https://ctf.ittsec.net" target="_blank" rel="noopener noreferrer" class="ctf-link">View Competition →</a>
+        </article>
+
+        <article class="ctf-card">
+          <div class="ctf-rank">#133 / 642</div>
+          <div class="ctf-event">BDSec CTF 2025</div>
+          <div class="ctf-meta">
+            Organized by Knight Squad<br />
+            International Competition<br />
+            2025.bdsec-ctf.com
+          </div>
+          <a href="https://2025.bdsec-ctf.com" target="_blank" rel="noopener noreferrer" class="ctf-link">View Competition →</a>
+        </article>
+
+        <article class="ctf-card">
+          <div class="ctf-rank">#17</div>
+          <div class="ctf-event">Lappung CTF 2025</div>
+          <div class="ctf-meta">
+            Organized by Lappung CTF<br />
+            Local CTF Competition<br />
+            lappungctf.dev
+          </div>
+          <a href="https://lappungctf.dev" target="_blank" rel="noopener noreferrer" class="ctf-link">View Competition →</a>
+        </article>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── PROJECTS ── -->
+    <section id="projects" class="fade-in">
+      <p class="section-label" data-num="05">Projects</p>
+
+      <div class="projects-grid">
+        <article class="project-card">
+          <div class="project-header">
+            <div>
+              <div class="project-name">WP-AUDIT</div>
+              <div class="project-subtitle">Black Box Scanner</div>
+            </div>
+            <span class="project-lang">Python</span>
+          </div>
+          <p class="project-desc">
+            Professional WordPress security scanner dengan 120+ checks. Mendeteksi kerentanan
+            via HTTP request eksternal. Output HTML dashboard bergaya Nessus dengan
+            Security Grade A–F dan 18 modul paralel.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">WordPress</span>
+            <span class="project-tag">Black Box</span>
+            <span class="project-tag">Python</span>
+            <span class="project-tag">50+ CVE</span>
+          </div>
+          <a href="https://github.com/tanzz1337/WPSec-Audit" target="_blank" rel="noopener noreferrer" class="project-link">View on GitHub</a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header">
+            <div>
+              <div class="project-name">WP-AUDIT GREY</div>
+              <div class="project-subtitle">Grey Box Auditor</div>
+            </div>
+            <span class="project-lang">Python</span>
+          </div>
+          <p class="project-desc">
+            Internal WordPress security auditor yang membaca langsung dari file system dan
+            database MySQL. Deteksi malware, core integrity check via MD5 checksum,
+            dan audit 14 modul internal tanpa HTTP request.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Internal Audit</span>
+            <span class="project-tag">Malware Detection</span>
+            <span class="project-tag">MySQL</span>
+            <span class="project-tag">Grey Box</span>
+          </div>
+          <a href="https://github.com/tanzz1337/WPAudit-GreyBox" target="_blank" rel="noopener noreferrer" class="project-link">View on GitHub</a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header">
+            <div>
+              <div class="project-name">CTF Writeups</div>
+              <div class="project-subtitle">Capture The Flag</div>
+            </div>
+            <span class="project-lang">Markdown</span>
+          </div>
+          <p class="project-desc">
+            Kumpulan dokumentasi write-up dari berbagai event CTF lokal, nasional,
+            dan internasional. Mencakup Web, Forensics, Crypto, dan OSINT.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">CTF</span>
+            <span class="project-tag">Web Security</span>
+            <span class="project-tag">Writeup</span>
+            <span class="project-tag">OSINT</span>
+          </div>
+          <a href="https://github.com/tanzz1337/Capture-The-Flag" target="_blank" rel="noopener noreferrer" class="project-link">View on GitHub</a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header">
+            <div>
+              <div class="project-name">Portfolio</div>
+              <div class="project-subtitle">GitHub Pages</div>
+            </div>
+            <span class="project-lang">HTML / CSS</span>
+          </div>
+          <p class="project-desc">
+            Portfolio website sebagai penetration tester independen. Menampilkan
+            Hall of Fame, 63+ certificate of appreciation, dan pencapaian CTF.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Portfolio</span>
+            <span class="project-tag">GitHub Pages</span>
+            <span class="project-tag">Frontend</span>
+          </div>
+          <a href="https://github.com/tanzz1337/tanzz1337.github.io" target="_blank" rel="noopener noreferrer" class="project-link">View on GitHub</a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header">
+            <div>
+              <div class="project-name">Apache Audit</div>
+              <div class="project-subtitle">Web Server Security Scanner</div>
+            </div>
+            <span class="project-lang">Python</span>
+          </div>
+          <p class="project-desc">
+            Scanner keamanan server Apache yang mengaudit konfigurasi,
+            modul aktif, header respons, dan kerentanan umum web server.
+            Output berupa laporan HTML profesional dengan severity grading.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Apache</span>
+            <span class="project-tag">Web Server</span>
+            <span class="project-tag">Python</span>
+            <span class="project-tag">Config Audit</span>
+          </div>
+          <a href="https://github.com/tanzz1337" target="_blank" rel="noopener noreferrer" class="project-link">View on GitHub</a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-header">
+            <div>
+              <div class="project-name">Log Scanner</div>
+              <div class="project-subtitle">Server Log Security Analyzer</div>
+            </div>
+            <span class="project-lang">Python</span>
+          </div>
+          <p class="project-desc">
+            Analyzer log server untuk mendeteksi pola serangan, akses mencurigakan,
+            SQL Injection, path traversal, dan brute force dari file access log
+            Apache/Nginx. Output laporan dengan timeline serangan.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Log Analysis</span>
+            <span class="project-tag">Apache</span>
+            <span class="project-tag">Nginx</span>
+            <span class="project-tag">Threat Detection</span>
+          </div>
+          <a href="https://github.com/tanzz1337/LogScanner" target="_blank" rel="noopener noreferrer" class="project-link">View on GitHub</a>
+        </article>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── BLOG ── -->
+    <section id="blog" class="fade-in">
+      <p class="section-label" data-num="06">Blog</p>
+
+      <div class="blog-list" role="list" aria-label="Blog posts">
+        <a href="https://medium.com/@Tanzz1337/picoctf-ph4nt0m-1ntrud3r-f6d37635aed5"
+           target="_blank" rel="noopener noreferrer"
+           class="blog-item" role="listitem">
+          <span class="blog-date">14 Apr 2025</span>
+          <span class="blog-title">PicoCTF: Ph4nt0m 1ntrud3r — Writeup</span>
+          <span class="blog-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="https://github.com/tanzz1337/Capture-The-Flag"
+           target="_blank" rel="noopener noreferrer"
+           class="blog-item" role="listitem">
+          <span class="blog-date">08 Sep 2025</span>
+          <span class="blog-title">CTF Writeup Collection — Berbagai Event Kompetisi</span>
+          <span class="blog-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- ── CONTACT ── -->
+    <section id="contact" class="fade-in">
+      <p class="section-label" data-num="07" style="justify-content:center;">Let's Connect</p>
+      <h2>Get In Touch</h2>
+      <p>
+        Tertarik untuk bekerja sama dalam security assessment, bug bounty, atau CTF?
+        Saya terbuka untuk diskusi dan kolaborasi.
+      </p>
+
+      <nav aria-label="Social links" class="social-links">
+        <a href="https://linkedin.com/in/sultanmarlindo" target="_blank" rel="noopener noreferrer" class="social-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+          LinkedIn
+        </a>
+        <a href="https://instagram.com/qoeiznzkeb" target="_blank" rel="noopener noreferrer" class="social-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://github.com/tanzz1337" target="_blank" rel="noopener noreferrer" class="social-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.004 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.65.24 2.87.12 3.17.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="https://medium.com/@Tanzz1337" target="_blank" rel="noopener noreferrer" class="social-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
+          </svg>
+          Medium
+        </a>
+      </nav>
+    </section>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <span>© 2026 Sultan Raja Marlindo</span>
+    <span>·</span>
+    <span>tanzz1337 — Web Pentester &amp; Security Researcher</span>
+    <span>·</span>
+    <span style="color: var(--green);">Built for Security</span>
+  </footer>
+
+  <script>
+    // ─── MOBILE NAV ─────────────────────────────────────────
+    const toggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    toggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      toggle.classList.toggle('open', isOpen);
+      toggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    // close nav on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // ─── SCROLL FADE IN ──────────────────────────────────────
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ─── ACTIVE NAV HIGHLIGHT ────────────────────────────────
+    const sections = document.querySelectorAll('section[id]');
+    const navALinks = document.querySelectorAll('.nav-links a');
+
+    const scrollObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navALinks.forEach(a => {
+            a.style.color = '';
+            if (a.getAttribute('href') === '#' + entry.target.id) {
+              a.style.color = 'var(--green)';
+            }
+          });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+
+    sections.forEach(s => scrollObserver.observe(s));
+  </script>
+</body>
+</html>
